@@ -2398,7 +2398,7 @@ Transform:
   - {fileID: 1183138344}
   - {fileID: 175422484}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &935865237
 GameObject:
@@ -2759,7 +2759,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1084173678
 GameObject:
@@ -3274,7 +3274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 910202730}
 --- !u!1 &1251238180
 GameObject:
   m_ObjectHideFlags: 0
@@ -4501,8 +4501,8 @@ RectTransform:
   - {fileID: 97479218}
   - {fileID: 514433686}
   - {fileID: 1149150817}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 2141659138}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -5623,13 +5623,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2092532531}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.188}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 279085530}
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_Father: {fileID: 2141659138}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2138877844
 GameObject:
@@ -5763,15 +5763,17 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2141659136}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 2.188}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 377608673}
   - {fileID: 56034806}
   - {fileID: 1874781590}
   - {fileID: 377418241}
+  - {fileID: 1694790582}
+  - {fileID: 2092532533}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2141659139
 MonoBehaviour:
@@ -5809,9 +5811,9 @@ MonoBehaviour:
   Horizontal: 0
   MouseX: 0
   MouseY: 0
-  FixedMouse: 20
   time: 0
   Mobile: 0
+  FixedMouse: 20
   moveJoystick: {fileID: 97479221}
   touchFild: {fileID: 788661642}
 --- !u!114 &2141659141
@@ -5860,8 +5862,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 2092532533}
-  characterStatus: {fileID: 2141659142}
-  characterInput: {fileID: 2141659140}
   speedRotation: 5
   rotationDirection: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
@@ -5895,7 +5895,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c74141b2f6bd364a8f2e537fb4d298b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  battle: 0
   AllConvas:
   - {fileID: 788661640}
   - {fileID: 97479217}
@@ -5905,8 +5904,6 @@ MonoBehaviour:
   - {fileID: 514433685}
   battleStats:
   - {fileID: 1149150816}
-  characterInput: {fileID: 2141659140}
-  characterStatus: {fileID: 2141659142}
 --- !u!136 &2141659145
 CapsuleCollider:
   m_ObjectHideFlags: 0
