@@ -116,9 +116,12 @@ public class CharacterAnimation : MonoBehaviour
 
 	void FlyUpdate ()
 	{
-		
-		if (!characterStatus.isGroundet) {
-			anim.SetBool ("Fly", true);
+		if (!characterMovement.test) {
+			if (!characterStatus.isGroundet) {
+				anim.SetBool ("Fly", true);
+			} else {
+				anim.SetBool ("Fly", false);
+			}
 		} else {
 			anim.SetBool ("Fly", false);
 		}
@@ -166,7 +169,11 @@ public class CharacterAnimation : MonoBehaviour
 	//test
 	void HangUpdate ()
 	{
-		anim.SetBool ("Hang", characterStatus.isHang);
-		anim.SetBool ("HangJump", Input.GetKeyDown (KeyCode.Space));
+		anim.SetBool ("OnWall", characterMovement.OnWallAnimation);
+		anim.SetBool ("HangJump", characterMovement.hangJumpAnimation);
+		anim.SetBool ("UpWall", characterMovement.UpWallAnimation);
+		if (characterMovement.OnWallCanLocomtion) {
+			anim.SetFloat ("OnWallH", characterInput.Horizontal);
+		}
 	}
 }

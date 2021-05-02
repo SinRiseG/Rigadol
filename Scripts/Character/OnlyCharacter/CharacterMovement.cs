@@ -44,7 +44,17 @@ public class CharacterMovement : MonoBehaviour
 	public List<Collider> helpers;
 	public bool OnWall;
 	public bool isJump;
+	public bool isUp;
 	public Collider col;
+	//Куда двигаемся
+	public Collider ColMove;
+	public Vector3 newPoint;
+	public bool OnWallCanLocomtion;
+	public bool OnWallAnimation;
+	public bool UpWallAnimation;
+	public bool hangJumpAnimation;
+	public bool test;
+	public float dir;
 	//	[Space (10)]
 	//	[Header ("Система лазанья по стенам")]
 	//	public float ComeTime;
@@ -86,8 +96,11 @@ public class CharacterMovement : MonoBehaviour
 	{
 		if (col.tag == "Helpers" && col.isTrigger) {
 			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
-			if (index == -1)
+			if (index == -1) {
+				test = true;
 				helpers.Add (col);
+			}
+			
 		}
 	}
 
@@ -95,8 +108,10 @@ public class CharacterMovement : MonoBehaviour
 	{
 		if (col.tag == "Helpers" && col.isTrigger) {
 			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
-			if (index != -1)
+			if (index != -1) {
+				test = false;
 				helpers.Remove (col);
+			}
 		}
 	}
 
@@ -109,7 +124,13 @@ public class CharacterMovement : MonoBehaviour
 			UpdateCrouch ();
 			FlyUpdate ();
 		}
-		//HangUpdate ();
+//		for (int i = 0; i < helpers.Count; i++) {
+//			if (helpers [i] == 0)
+//				test = false;
+//			else
+//				test = true;
+//		}
+		ClimpingSystemUpdate ();
 	}
 
 	void LocomotionUpdate ()
@@ -140,7 +161,7 @@ public class CharacterMovement : MonoBehaviour
 
 	void JumpUdpate ()
 	{
-		if (!characterStatus.isHang) {
+		if (!test) {
 			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
 			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
 
@@ -195,18 +216,93 @@ public class CharacterMovement : MonoBehaviour
 
 	void ClimpingSystemUpdate ()
 	{
-		if (!isJump) {
+		if (!isJump && !isUp) {
 			if (Input.GetKeyUp (KeyCode.Space)) {
-				col = null;
-				for (int i = 0; i < helpers.Count; i++) {
-					if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
-						if (col == null)
-							col = helpers [i];
-						else if (helpers [i].bounds.max.y > col.bounds.max.y)
-							col = helpers [i];
+				if (OnWall && !Physics.Raycast (transform.position + Vector3.up * 2.1f, transform.forward, 1)) {
+					isUp = true;
+					newPoint = transform.position + Vector3.up * 2.1f + transform.forward * .5f;
+					OnWallAnimation = false;
+					UpWallAnimation = true;
+
+				} else {
+					col = null;
+					for (int i = 0; i < helpers.Count; i++) {
+						if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
+							if (col == null)
+								col = helpers [i];
+							else if (helpers [i].bounds.max.y > col.bounds.max.y)
+								col = helpers [i];
+						}
+					}
+					if (col != null) {
+						Ray ray = new Ray (
+							          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
+							          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
+						          );
+						RaycastHit hit;
+						if (Physics.Raycast (ray, out hit, 2.5f)) {
+							ColMove = col;
+							newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
+							isJump = true;
+							locomotionCollider.enabled = false;
+							crouchCollider.enabled = false;
+							rg.useGravity = false;
+							if (!OnWall) {
+								OnWall = true;
+								OnWallAnimation = true;
+							} else {
+								hangJumpAnimation = true;
+							}
+						}
 					}
 				}
 			}
+		}
+		if (isJump && !isUp) {
+			if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
+				transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
+				transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), 5f * Time.deltaTime);
+			} else {
+				isJump = false;
+				hangJumpAnimation = false;
+			}
+		} else if (OnWall && isUp) {
+			if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
+				if (transform.position.y < newPoint.y - .1f) {
+					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), 10f * Time.deltaTime);
+				} else {
+					transform.position = Vector3.Slerp (transform.position, newPoint, 5f * Time.deltaTime);
+				}
+			} else {
+				rg.useGravity = true;
+				locomotionCollider.enabled = true;
+				OnWall = false;
+				isJump = false;
+				isUp = false;
+			}
+		}
+		if (OnWall && !isJump && !isUp) {
+			if (characterInput.Horizontal != 0) {
+				if (characterInput.Horizontal > 0) {
+					dir = .5f;
+				} else if (characterInput.Horizontal < 0) {
+					dir = -.5f;
+				}
+				if (ColMove != null) {
+					RaycastHit hit;
+					if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * dir, transform.forward, out hit, 1f)) {
+						if (hit.collider == ColMove) {
+							OnWallCanLocomtion = true;
+						} else {
+							OnWallCanLocomtion = false;
+						}
+					}
+					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * dir, transform.forward, Color.red);
+
+				}
+			}
+		} else {
+			OnWallCanLocomtion = false;
 		}
 	}
 

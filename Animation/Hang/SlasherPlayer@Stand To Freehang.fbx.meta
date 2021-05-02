@@ -135,7 +135,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Stand To Freehang
       takeName: mixamo.com
-      firstFrame: 0
+      firstFrame: 32
       lastFrame: 102
       wrapMode: 0
       orientationOffsetY: 0
