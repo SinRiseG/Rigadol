@@ -3907,7 +3907,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1469617298
 Transform:
   m_ObjectHideFlags: 0
@@ -3985,7 +3985,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d40a7fa0fdf3c0f41b5e5fe296f25105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterInput: {fileID: 2141659140}
 --- !u!1 &1521705121
 GameObject:
   m_ObjectHideFlags: 0
@@ -5466,7 +5465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2026885203
 Transform:
   m_ObjectHideFlags: 0
@@ -5544,7 +5543,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebbde3015b981194b8e3456ba6564946, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterInput: {fileID: 2141659140}
 --- !u!1 &2077068412
 GameObject:
   m_ObjectHideFlags: 0
@@ -5731,6 +5729,7 @@ GameObject:
   - component: {fileID: 2141659146}
   - component: {fileID: 2141659145}
   - component: {fileID: 2141659147}
+  - component: {fileID: 2141659148}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -5872,18 +5871,10 @@ MonoBehaviour:
   CrouchCheck: {fileID: 414429349}
   CrouchIt: 0
   FlyCheck: {fileID: 1866738263}
-  ComeTime: 0
-  SpeedUp: 5
+  helpers: []
   OnWall: 0
-  OnJump: 0
-  hangPos: {fileID: 0}
-  hangPosnNow: {fileID: 0}
-  ShangPos: {fileID: 0}
-  ShangPosNow: {fileID: 0}
-  HangUp: {fileID: 0}
-  HangPosUp: {fileID: 0}
-  ShandUp: {fileID: 0}
-  HangVector: {x: 0, y: 0, z: 0}
+  isJump: 0
+  col: {fileID: 0}
 --- !u!114 &2141659144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5945,3 +5936,15 @@ CapsuleCollider:
   m_Height: 1.2
   m_Direction: 1
   m_Center: {x: 0, y: 0.59, z: 0}
+--- !u!65 &2141659148
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2141659136}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2.02, z: 1}
+  m_Center: {x: 0, y: 1.05, z: 0}
