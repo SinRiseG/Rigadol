@@ -41,29 +41,35 @@ public class CharacterMovement : MonoBehaviour
 	[Header ("Чекер полёта персонажа в перёд")]
 	public GameObject FlyCheck;
 
-	[Header ("hang")]
-	public float ComeTime;
-	public float SpeedUp;
-
-	private bool Stay;
-	private bool jump;
-	private bool Wall;
+	public List<Collider> helpers;
 	public bool OnWall;
-	public bool OnJump;
-
-	//Зацепление сейчас
-	public Transform hangPos;
-	public Transform hangPosnNow;
-
-	public Transform ShangPos;
-	public Transform ShangPosNow;
-	//Верхняя точка
-	public Transform HangUp;
-	public Transform HangPosUp;
-
-	public Transform ShandUp;
-
-	public Vector3 HangVector;
+	public bool isJump;
+	public Collider col;
+	//	[Space (10)]
+	//	[Header ("Система лазанья по стенам")]
+	//	public float ComeTime;
+	//	[Header ("Скорость подъема на преграда")]
+	//	public float SpeedUp;
+	//
+	//	private bool Stay;
+	//	private bool jump;
+	//	private bool Wall;
+	//public bool OnWall;
+	//	public bool OnJump;
+	//
+	//	//Зацепление сейчас
+	//	public Transform hangPos;
+	//	public Transform hangPosnNow;
+	//
+	//	public Transform ShangPos;
+	//	public Transform ShangPosNow;
+	//	//Верхняя точка
+	//	public Transform HangUp;
+	//	public Transform HangPosUp;
+	//
+	//	public Transform ShandUp;
+	//
+	//	public Vector3 HangVector;
 
 	Vector3 moveCurrend;
 	float moveAmound;
@@ -73,6 +79,25 @@ public class CharacterMovement : MonoBehaviour
 		rg = GetComponent<Rigidbody> ();
 		characterStatus = GetComponent<CharacterState> ();
 		characterInput = GetComponent<CharacterInput> ();
+		helpers = new List<Collider> ();
+	}
+
+	void  OnTriggerEnter (Collider col)
+	{
+		if (col.tag == "Helpers" && col.isTrigger) {
+			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
+			if (index == -1)
+				helpers.Add (col);
+		}
+	}
+
+	void OnTriggerExit (Collider col)
+	{
+		if (col.tag == "Helpers" && col.isTrigger) {
+			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
+			if (index != -1)
+				helpers.Remove (col);
+		}
 	}
 
 	public void MoveUpdate ()
@@ -84,7 +109,7 @@ public class CharacterMovement : MonoBehaviour
 			UpdateCrouch ();
 			FlyUpdate ();
 		}
-		HangUpdate ();
+		//HangUpdate ();
 	}
 
 	void LocomotionUpdate ()
@@ -168,69 +193,61 @@ public class CharacterMovement : MonoBehaviour
 		}
 	}
 
-	#region HangUpdate
-
-	void HangUpdate ()
+	void ClimpingSystemUpdate ()
 	{
-		HangConfigs ();
-		HangOnWallBool ();
-		HangWall ();
-	}
-
-	void HangConfigs ()
-	{
-		if (characterStatus.isWall) {
-			rg.useGravity = false;
-		} else {
-			rg.useGravity = true;
-		}
-	}
-
-	void HangOnWallBool ()
-	{
-		if (characterStatus.isHang) {
-			characterStatus.isWall = true;
-			OnWall = true;
-		} else if (!characterStatus.isHang && ComeTime == 0) {
-			characterStatus.isWall = false;
-			OnWall = false;
-		}
-	}
-
-	void HangWall ()
-	{
-		Wall = characterStatus.isWall;
-		if (Wall) {
-			if (ComeTime == 0) {
-				transform.position = new Vector3 (transform.position.x, hangPosnNow.position.y, hangPosnNow.position.z);
-				transform.rotation = Quaternion.Slerp (transform.rotation, hangPosnNow.rotation, 5 * Time.deltaTime);
-			} else {
-				characterStatus.isWall = true;
-				OnWall = true;
-			}
-			if (Input.GetKey (KeyCode.Space)) {
-				ComeTime += Time.deltaTime;
-				jump = true;
-				ShangPosNow = HangPosUp;
-			}
-			if (jump) {
-				if (characterStatus.CanHangUp) {
-					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, ShangPosNow.position.y, ShangPosNow.position.z), SpeedUp * Time.deltaTime);
-					transform.rotation = Quaternion.Slerp (transform.rotation, ShangPosNow.rotation, SpeedUp * Time.deltaTime);
-					if (hangPosnNow == ShangPosNow) {
-						ComeTime = 0;
-						jump = false;
+		if (!isJump) {
+			if (Input.GetKeyUp (KeyCode.Space)) {
+				col = null;
+				for (int i = 0; i < helpers.Count; i++) {
+					if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
+						if (col == null)
+							col = helpers [i];
+						else if (helpers [i].bounds.max.y > col.bounds.max.y)
+							col = helpers [i];
 					}
-				} else {
-					ComeTime = 0;
-					jump = false;
 				}
 			}
 		}
-
 	}
 
-	#endregion
+	//	#region HangUpdate
+	//
+	//	void HangUpdate ()
+	//	{
+	//		HangConfigs ();
+	//		HangOnWallBool ();
+	//		HangWall ();
+	//	}
+	//
+	//	void HangConfigs ()
+	//	{
+	//		if (characterStatus.isWall) {
+	//			rg.useGravity = false;
+	//		} else {
+	//			rg.useGravity = true;
+	//		}
+	//	}
+	//
+	//	void HangOnWallBool ()
+	//	{
+	//		if (characterStatus.isHang) {
+	//			characterStatus.isWall = true;
+	//			OnWall = true;
+	//		} else if (!characterStatus.isHang && ComeTime == 0) {
+	//			characterStatus.isWall = false;
+	//			OnWall = false;
+	//		}
+	//	}
+	//
+	//	void HangWall ()
+	//	{
+	//		if(OnWall)
+	//		{
+	//			transform.position = Vector3.Slerp(transform.position,new Vector3 (hangPosnNow))
+	//		}
+	//	}
+	//
+	//	#endregion
 
 
 

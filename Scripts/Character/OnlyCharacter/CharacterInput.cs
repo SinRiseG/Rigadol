@@ -319,41 +319,41 @@ public class CharacterInput : MonoBehaviour
 		characterState.isFlyForwardEmpty = _flyCheck;
 	}
 	//test
-	public void OnHangCheck (bool _hang)
-	{
-		characterState.isHang = _hang;
-	}
-
-	public void OnHangTransform (Transform _trans)
-	{
-		characterMovement.hangPos = _trans;
-	}
-
-	public void OnHelpersPosition (Transform _hangPosition)
-	{
-		characterMovement.hangPosnNow = _hangPosition;
-	}
-
-	public void OnCanUpHang (bool _canHang)
-	{
-		characterState.CanHangUp = _canHang;
-	}
-
-	public void OnWeakUpHang (bool _canUp)
-	{
-		//kbholjbn
-	}
-
-	public void OnUpHangTransform (Transform _UpHang)
-	{
-		characterMovement.HangUp = _UpHang;
-	}
-
-	public void OnUpHangPosition (Transform _UpHangPosition)
-	{
-		characterMovement.HangPosUp = _UpHangPosition;
-	}
-
+	//	public void OnHangCheck (bool _hang)
+	//	{
+	//		characterState.isHang = _hang;
+	//	}
+	//
+	//	public void OnHangTransform (Transform _trans)
+	//	{
+	//		characterMovement.hangPos = _trans;
+	//	}
+	//
+	//	public void OnHelpersPosition (Transform _hangPosition)
+	//	{
+	//		characterMovement.hangPosnNow = _hangPosition;
+	//	}
+	//
+	//	public void OnCanUpHang (bool _canHang)
+	//	{
+	//		characterState.CanHangUp = _canHang;
+	//	}
+	//
+	//	public void OnWeakUpHang (bool _canUp)
+	//	{
+	//		//kbholjbn
+	//	}
+	//
+	//	public void OnUpHangTransform (Transform _UpHang)
+	//	{
+	//		characterMovement.HangUp = _UpHang;
+	//	}
+	//
+	//	public void OnUpHangPosition (Transform _UpHangPosition)
+	//	{
+	//		characterMovement.HangPosUp = _UpHangPosition;
+	//	}
+	//
 	void CheckBattleOrCrouchUpdate ()
 	{
 		if (!characterState.isCrouchEmpty) {
