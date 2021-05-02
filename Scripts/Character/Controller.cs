@@ -2,17 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Controller : MonoBehaviour
+namespace SinRise
 {
-
-	public CharacterInput characterInput;
-	public CharacterAnimation characterAnimation;
-	public CharacterMovement characterMovement;
-
-	void Update ()
+	public class Controller : MonoBehaviour
 	{
-		characterInput.InputUpdate ();
-		characterAnimation.AnimationUpdate ();
-		characterMovement.MoveUpdate ();
+		public BoxCollider boxCollider;
+		public CharacterInput characterInput;
+		public CharacterAnimation characterAnimation;
+		public CharacterMovement characterMovement;
+
+		void Start ()
+		{
+			boxCollider = AddComponentMenu (BoxCollider);
+		}
+
+
+		void Update ()
+		{
+			characterInput.InputUpdate ();
+			characterAnimation.AnimationUpdate ();
+			characterMovement.MoveUpdate ();
+		}
 	}
 }
