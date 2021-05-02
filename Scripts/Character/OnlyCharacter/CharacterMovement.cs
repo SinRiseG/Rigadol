@@ -4,26 +4,41 @@ using UnityEngine;
 
 public class CharacterMovement : MonoBehaviour
 {
-
+	[Header ("Переменная перемещения камеры.")]
 	public Transform cameraTransform;
-	public CharacterState characterStatus;
-	public CharacterInput characterInput;
 
+	private CharacterState characterStatus;
+	private CharacterInput characterInput;
+	private Rigidbody rg;
+	[Space (5)]
+	[Header ("Переменная поворота персонажа.")]
 	public float speedRotation;
 
+	[HideInInspector]
 	public Vector3 rotationDirection;
+	[HideInInspector]
 	public Vector3 moveDirection;
 
+	[Space (5)]
+	[Header ("Переменная силы прыжка персонажа.")]
 	public float JumpPower;
+	[Space (5)]
+	[Header ("Переменная силы полета в перёд персонажа.")]
 	public float FlyCurrend;
-
-	[Header ("CrouchUpdate")]
+	[Space (5)]
+	[Header ("Переменные для приседа персонажа.")]
+	[Header ("Колизия персонажа в стоячем положении.")]
 	public CapsuleCollider locomotionCollider;
+	[Space (5)]
+	[Header ("Колизия персонажа в сидячем положении.")]
 	public CapsuleCollider crouchCollider;
+	[Space (5)]
+	[Header ("Чекер персонажа отвечающий за проверку нахождения над головой объектов.")]
 	public GameObject CrouchCheck;
+	[HideInInspector]
 	public int CrouchIt = 0;
-
-	[Header ("FlyCheck")]
+	[Space (5)]
+	[Header ("Чекер полёта персонажа в перёд")]
 	public GameObject FlyCheck;
 
 	[Header ("hang")]
@@ -50,15 +65,14 @@ public class CharacterMovement : MonoBehaviour
 
 	public Vector3 HangVector;
 
-
-
-	Rigidbody rg;
 	Vector3 moveCurrend;
 	float moveAmound;
 
 	void Awake ()
 	{
 		rg = GetComponent<Rigidbody> ();
+		characterStatus = GetComponent<CharacterState> ();
+		characterInput = GetComponent<CharacterInput> ();
 	}
 
 	public void MoveUpdate ()

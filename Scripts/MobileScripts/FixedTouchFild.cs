@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class FixedTouchFild : MonoBehaviour , IPointerDownHandler,IPointerUpHandler
 {
 
+	[HideInInspector]
 	public Vector2 touchDist;
 	Vector2 PointerOld;
 

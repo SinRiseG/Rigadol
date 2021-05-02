@@ -6,19 +6,24 @@ using UnityEngine.EventSystems;
 
 public class MoviJoystick : MonoBehaviour, IPointerDownHandler,IDragHandler,IPointerUpHandler
 {
-	[Header ("Image")]
+	[Header ("Площадка для джойстика")]
 	public Image PlaneForJoystic;
+	[Space (5)]
+	[Header ("Кортинка джойстика")]
 	public Image joistick;
+	[Space (5)]
+	[Header ("Кортинка стика")]
 	public Image stick;
-
-	[Header ("GameObject")]
+	[Space (5)]
+	[Header ("Игровой объект джойстик ")]
 	public GameObject joustickGameObject;
 
-	[Header ("Vectors")]
+	[HideInInspector]
 	public Vector2 posJoystic;
+	[HideInInspector]
 	public Vector2 inputStick;
-
-	[Header ("Floats")]
+	[Space (5)]
+	[Header ("Чувствительность")]
 	public float Sensetive;
 
 	#region IPointerUpHandler implementation

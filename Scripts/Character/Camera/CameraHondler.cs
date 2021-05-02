@@ -4,25 +4,48 @@ using UnityEngine;
 
 public class CameraHondler : MonoBehaviour
 {
+	[Header ("Положение самой камеры.")]
 	public Transform camTrans;
+	[Space (5)]
+	[Header ("Положения пивота.")]
 	public Transform pivot;
+	[Space (5)]
+	[Header ("Положения персонажа.")]
 	public Transform Character;
+	[Space (5)]
+	[Header ("Положения камеры холдер.")]
 	public Transform mTransform;
 
+	[Space (10)]
+	[Header ("Компоненты с персонажа.")]
 	public CharacterState characterStatus;
 	public CharacterInput characterInput;
+	[Header ("Настройки камеры.")]
 	public CameraConfig cameraConfig;
+	[Space (5)]
+	[Header ("Смена позиции камеры от левого плеча")]
 	public bool leftPivot;
-	public float delta;
 
+
+	[HideInInspector]
+	public float delta;
+	[HideInInspector]
 	public float mouseX;
+	[HideInInspector]
 	public float mouseY;
+	[HideInInspector]
 	public float smothX;
+	[HideInInspector]
 	public float smothY;
+	[HideInInspector]
 	public float smoothXVelocity;
+	[HideInInspector]
 	public float smoothYVelocity;
+	[HideInInspector]
 	public float lookAngle;
+	[HideInInspector]
 	public float titlAngle;
+
 
 	void LateUpdate ()
 	{

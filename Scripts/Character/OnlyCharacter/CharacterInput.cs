@@ -21,9 +21,6 @@ public class CharacterInput : MonoBehaviour
 	//переменная движенния мыши горизонтально
 	[HideInInspector]
 	public float MouseY;
-	//для мобильного упровления чувствительность
-	[Header ("Чувствительность мобильной камеры ")]
-	public float FixedMouse;
 	//Айди кнопки битвы
 	int battleID;
 	//Показатель состояния персонажа битвы
@@ -42,31 +39,45 @@ public class CharacterInput : MonoBehaviour
 	[Space (10)]
 	[Header ("Переключения управления на мобильое ")]
 	public bool Mobile;
-	[Header ("Mobile Controll")]
+	[Header ("Мобильные компоненты управления")]
+	//для мобильного упровления чувствительность
+	[Header ("Чувствительность мобильной камеры ")]
+	public float FixedMouse;
+	[Space (5)]
+	[Header ("Джойстик для передвижения")]
 	public MoviJoystick moveJoystick;
+	[Space (5)]
+	[Header ("Джойстик для движения камерой")]
 	public FixedTouchFild touchFild;
 
+	//Метод старт в котором я переменным указываю компонент других скриптов для дальнеёшего их использования
 	void Start ()
 	{
 		characterState = GetComponent<CharacterState> ();
 		characterAnimation = GetComponent<CharacterAnimation> ();
 		characterMovement = GetComponent<CharacterMovement> ();
 	}
-
+	// главный метод работы инпута , в него указываю все свои методы
 	public void InputUpdate ()
 	{
+		// компонент не обходимый не зависимо от вида упровления мобильного или пк 
 		CheckBattleOrCrouchUpdate ();
 
 		if (!Mobile) {
+			// метод упровления с пк
 			InputPC ();
 		} else {
+			// метод управления с мобильного 
 			InputMobile ();
 		}
 	}
 
+	// регион упровления пк
 
 	#region PCInput
 
+	//центральынй метод мобильного управления в котором задействованы все матоды относящиеся к
+	// пк управлению
 	void InputPC ()
 	{
 		PCLocomotionUpdate ();
@@ -77,7 +88,7 @@ public class CharacterInput : MonoBehaviour
 			PCCrouchUpdate ();
 		}
 	}
-
+	// стандартное управления
 	void PCLocomotionUpdate ()
 	{
 		Vertical = Input.GetAxis ("Vertical");
@@ -86,7 +97,7 @@ public class CharacterInput : MonoBehaviour
 		MouseX = Input.GetAxis ("Mouse X");
 		MouseY = Input.GetAxis ("Mouse Y");
 	}
-
+	// режим битвы
 	void PCBattelUpdate ()
 	{
 		
@@ -110,7 +121,7 @@ public class CharacterInput : MonoBehaviour
 
 	}
 
-
+	// метод аттаки
 	void PCAttackUpdate ()
 	{
 
@@ -133,7 +144,7 @@ public class CharacterInput : MonoBehaviour
 			}
 		}
 	}
-
+	//метод прыжка
 	void PCCrouchUpdate ()
 	{
 		if (!battle) {
@@ -159,6 +170,7 @@ public class CharacterInput : MonoBehaviour
 
 	#region MobileInput
 
+	// центральный скрип обработки управления с мобильного
 	void InputMobile ()
 	{
 		MoboilLocomotionUpdate ();
@@ -288,6 +300,8 @@ public class CharacterInput : MonoBehaviour
 
 	#endregion
 
+	//Регион работы чекеров ...
+
 	#region Checkers
 
 	public void OnGroundCheck (bool _ground)
@@ -355,8 +369,6 @@ public class CharacterInput : MonoBehaviour
 			crouchID = 1;
 		}
 	}
-
-
 
 	#endregion
 }

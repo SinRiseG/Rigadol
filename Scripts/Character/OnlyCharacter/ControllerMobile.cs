@@ -5,19 +5,22 @@ using UnityEngine;
 public class ControllerMobile : MonoBehaviour
 {
 
-
-	[Header ("Mobile State")]
-	public bool battle;
-
-	[Header ("Convas For Mobile")]
+	[Header ("Конвасы мобильного управления относительно состояния персонажа ")]
 	public GameObject[] AllConvas;
+	[Space (5)]
 	public GameObject[] locomotionStats;
+	[Space (5)]
 	public GameObject[] battleStats;
 
-	[Header ("Components")]
-	public CharacterInput characterInput;
-	public CharacterState characterStatus;
 
+	private CharacterInput characterInput;
+	private CharacterState characterStatus;
+
+	void Start ()
+	{
+		characterStatus = GetComponent<CharacterState> ();
+		characterInput = GetComponent<CharacterInput> ();
+	}
 
 	void Update ()
 	{
