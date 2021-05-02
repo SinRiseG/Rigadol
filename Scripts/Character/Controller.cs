@@ -5,11 +5,16 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-	public BoxCollider boxCollider;
-	public CharacterInput characterInput;
-	public CharacterAnimation characterAnimation;
-	public CharacterMovement characterMovement;
+	private CharacterInput characterInput;
+	private CharacterAnimation characterAnimation;
+	private CharacterMovement characterMovement;
 
+	void Start ()
+	{
+		characterInput = GetComponent<CharacterInput> ();
+		characterAnimation = GetComponent<CharacterAnimation> ();
+		characterMovement = GetComponent <CharacterMovement> ();
+	}
 
 	void Update ()
 	{

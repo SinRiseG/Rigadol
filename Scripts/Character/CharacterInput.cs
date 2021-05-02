@@ -4,32 +4,54 @@ using UnityEngine;
 
 public class CharacterInput : MonoBehaviour
 {
-	public CharacterState characterState;
-	public CharacterAnimation characterAnimation;
-	public CharacterMovement characterMovement;
-
+	//Компаненты приватные
+	private CharacterState characterState;
+	private CharacterAnimation characterAnimation;
+	private CharacterMovement characterMovement;
+	//Переменная вертикального движения
+	[HideInInspector]
 	public float Vertical;
+	//переменная горизонтального движения
+	[HideInInspector]
 	public float Horizontal;
 
+	//переменная джижения мыши вертикально
+	[HideInInspector]
 	public float MouseX;
+	//переменная движенния мыши горизонтально
+	[HideInInspector]
 	public float MouseY;
-
-
+	//для мобильного упровления чувствительность
+	[Header ("Чувствительность мобильной камеры ")]
+	public float FixedMouse;
+	//Айди кнопки битвы
 	int battleID;
+	//Показатель состояния персонажа битвы
 	bool battle;
+	//айди кнопки аттаки
 	int attackID;
+	//айди кнопки кувырка
 	int diveID;
+	//айди кнопки присяда
 	int crouchID;
+	//Показатель состояния персонажа приседа
 	bool crouch;
+	[HideInInspector]
 	public float time;
 
+	[Space (10)]
+	[Header ("Переключения управления на мобильое ")]
 	public bool Mobile;
 	[Header ("Mobile Controll")]
 	public MoviJoystick moveJoystick;
 	public FixedTouchFild touchFild;
 
-
-	public float FixedMouse;
+	void Start ()
+	{
+		characterState = GetComponent<CharacterState> ();
+		characterAnimation = GetComponent<CharacterAnimation> ();
+		characterMovement = GetComponent<CharacterMovement> ();
+	}
 
 	public void InputUpdate ()
 	{

@@ -188,7 +188,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 830905901}
 --- !u!23 &81368737
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 1216030614}
 --- !u!23 &102435094
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -472,7 +472,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 1315970703}
 --- !u!23 &114625723
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1573,7 +1573,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 707060400}
 --- !u!23 &495180925
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2898,7 +2898,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 1039108447}
 --- !u!23 &1177535219
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3478,7 +3478,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 361717280}
 --- !u!23 &1266851375
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4358,7 +4358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e1a7b61a857c8449a5da1c3a0b029a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Positionhelperst: {fileID: 0}
+  Positionhelperst: {fileID: 1558643694}
 --- !u!23 &1684497094
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5805,18 +5805,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c372cd2f9c62414b91f11593fbc1769, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterState: {fileID: 2141659142}
-  characterAnimation: {fileID: 2141659139}
-  characterMovement: {fileID: 2141659143}
   Vertical: 0
   Horizontal: 0
   MouseX: 0
   MouseY: 0
+  FixedMouse: 20
   time: 0
-  Mobile: 1
+  Mobile: 0
   moveJoystick: {fileID: 97479221}
   touchFild: {fileID: 788661642}
-  FixedMouse: 20
 --- !u!114 &2141659141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5828,9 +5825,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 761ab6d6bd4908f498f121b57a98e37a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterInput: {fileID: 2141659140}
-  characterAnimation: {fileID: 2141659139}
-  characterMovement: {fileID: 2141659143}
 --- !u!114 &2141659142
 MonoBehaviour:
   m_ObjectHideFlags: 0
