@@ -13,11 +13,8 @@ public class CharacterState : MonoBehaviour
 	public bool isDive;
 	public bool isJump;
 	public bool isCrouch;
-	public bool isWall;
+	public bool OnWall;
 	public bool isCrouchEmpty;
 	public bool isFlyForwardEmpty;
-	//test
-	[Header ("Wall")]
-	public bool isHang;
-	public bool CanHangUp;
+
 }

@@ -53,7 +53,6 @@ public class CharacterAnimation : MonoBehaviour
 		DiveUpdate ();
 		DownUpdate ();
 		FlyUpdate ();
-		jumpbool ();
 		CrouchUpdate ();
 		HangUpdate ();
 	}
@@ -96,42 +95,9 @@ public class CharacterAnimation : MonoBehaviour
 		anim.SetBool ("tDive", characterStatus.isDive);
 	}
 
-	public void JumpUpdate ()
-	{
-		if (characterStatus.isGroundet) {
-			if (moveAmound != 0f) {
-				jump = true;
-			} else {
-				jump = true;
-			}
-
-		}
-		if (characterStatus.isHang) {
-			if (moveAmound != 0f) {
-				jump = true;
-			} else {
-				jump = true;
-			}
-		}
-
-
-	}
-
-	void jumpbool ()
-	{
-		if (jump) {
-			timejump += Time.deltaTime;
-			if (timejump > 0.1) {
-				jump = false;
-				timejump = 0;
-			}
-		}
-		characterStatus.isJump = jump;
-	}
-
 	void FlyUpdate ()
 	{
-		if (!characterMovement.test) {
+		if (!characterMovement.HaveOnWall) {
 			if (!characterStatus.isGroundet) {
 				anim.SetBool ("Fly", true);
 			} else {
@@ -140,7 +106,6 @@ public class CharacterAnimation : MonoBehaviour
 		} else {
 			anim.SetBool ("Fly", false);
 		}
-
 	}
 
 	void DownUpdate ()
@@ -181,7 +146,6 @@ public class CharacterAnimation : MonoBehaviour
 		anim.SetBool ("Crouch", characterStatus.isCrouch);
 	}
 
-	//test
 	void HangUpdate ()
 	{
 		anim.SetBool ("OnWall", characterMovement.OnWallAnimation);

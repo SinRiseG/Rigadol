@@ -33,6 +33,9 @@ public class CharacterInput : MonoBehaviour
 	int crouchID;
 	//Показатель состояния персонажа приседа
 	bool crouch;
+	//Показатель состояния прыжка
+	[HideInInspector]
+	public bool jump;
 	[HideInInspector]
 	public float time;
 
@@ -62,6 +65,8 @@ public class CharacterInput : MonoBehaviour
 	{
 		// компонент не обходимый не зависимо от вида упровления мобильного или пк 
 		CheckBattleOrCrouchUpdate ();
+		JumpUpdate ();
+
 
 		if (!Mobile) {
 			// метод упровления с пк
@@ -81,10 +86,10 @@ public class CharacterInput : MonoBehaviour
 	void InputPC ()
 	{
 		PCLocomotionUpdate ();
+		PCJumpUpdate ();
 		if (!characterMovement.OnWall) {
 			PCBattelUpdate ();
 			PCAttackUpdate ();
-			PCJumpUpdate ();
 			PCCrouchUpdate ();
 		}
 	}
@@ -138,7 +143,7 @@ public class CharacterInput : MonoBehaviour
 		if (!characterState.isBattle) {
 			if (!characterState.isCrouchEmpty) {
 				if (Input.GetKeyDown (KeyCode.Space)) {
-					characterAnimation.JumpUpdate ();
+					jump = true;
 
 				}
 			}
@@ -233,11 +238,7 @@ public class CharacterInput : MonoBehaviour
 
 	public void OnJompState ()
 	{
-		if (characterState.isGroundet) {
-			if (!characterState.isCrouchEmpty) {
-				characterAnimation.JumpUpdate ();
-			}
-		}
+		jump = true;
 	}
 
 	#endregion
@@ -300,6 +301,22 @@ public class CharacterInput : MonoBehaviour
 
 	#endregion
 
+	void JumpUpdate ()
+	{
+		characterState.isJump = jump;
+		float time = 0f;
+		if (jump) {
+			time += Time.deltaTime;
+			if (time > 0.1) {
+				jump = false;
+				time = 0f;
+			}
+		}
+	}
+
+
+
+
 	//Регион работы чекеров ...
 
 	#region Checkers
@@ -318,42 +335,7 @@ public class CharacterInput : MonoBehaviour
 	{
 		characterState.isFlyForwardEmpty = _flyCheck;
 	}
-	//test
-	//	public void OnHangCheck (bool _hang)
-	//	{
-	//		characterState.isHang = _hang;
-	//	}
-	//
-	//	public void OnHangTransform (Transform _trans)
-	//	{
-	//		characterMovement.hangPos = _trans;
-	//	}
-	//
-	//	public void OnHelpersPosition (Transform _hangPosition)
-	//	{
-	//		characterMovement.hangPosnNow = _hangPosition;
-	//	}
-	//
-	//	public void OnCanUpHang (bool _canHang)
-	//	{
-	//		characterState.CanHangUp = _canHang;
-	//	}
-	//
-	//	public void OnWeakUpHang (bool _canUp)
-	//	{
-	//		//kbholjbn
-	//	}
-	//
-	//	public void OnUpHangTransform (Transform _UpHang)
-	//	{
-	//		characterMovement.HangUp = _UpHang;
-	//	}
-	//
-	//	public void OnUpHangPosition (Transform _UpHangPosition)
-	//	{
-	//		characterMovement.HangPosUp = _UpHangPosition;
-	//	}
-	//
+
 	void CheckBattleOrCrouchUpdate ()
 	{
 		if (!characterState.isCrouchEmpty) {

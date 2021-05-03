@@ -53,7 +53,7 @@ public class CharacterMovement : MonoBehaviour
 	public bool OnWallAnimation;
 	public bool UpWallAnimation;
 	public bool hangJumpAnimation;
-	public bool test;
+	public bool HaveOnWall;
 	public float dir;
 	//	[Space (10)]
 	//	[Header ("Система лазанья по стенам")]
@@ -97,7 +97,7 @@ public class CharacterMovement : MonoBehaviour
 		if (col.tag == "Helpers" && col.isTrigger) {
 			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
 			if (index == -1) {
-				test = true;
+				HaveOnWall = true;
 				helpers.Add (col);
 			}
 			
@@ -109,7 +109,7 @@ public class CharacterMovement : MonoBehaviour
 		if (col.tag == "Helpers" && col.isTrigger) {
 			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
 			if (index != -1) {
-				test = false;
+				HaveOnWall = false;
 				helpers.Remove (col);
 			}
 		}
@@ -161,24 +161,46 @@ public class CharacterMovement : MonoBehaviour
 
 	void JumpUdpate ()
 	{
-		if (!test) {
+		if (!HaveOnWall) {
+			characterStatus.OnWall = false;
 			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
 			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
-
 			if (!characterStatus.isGroundet) {
 				if (!characterStatus.isFlyForwardEmpty) {
 					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
 				} else {
 					moveCurrend = new Vector3 (0f, 0f, 0f);
 				}
-			} else if (characterStatus.isGroundet) {
+			} else {
 				moveCurrend = new Vector3 (0f, 0f, 0f);
+				if (characterStatus.isJump) {
+					rg.velocity = JumpPower * Vector3.up;
+				}
 			}
-			if (characterStatus.isJump) {
-				//rg.AddForce (transform.up * JumpPower);
-				rg.velocity = JumpPower * Vector3.up;
-			}
+		} else {
+			characterStatus.OnWall = true;
 		}
+
+//		if (!test) {
+//			characterStatus.OnWall = false;
+//			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
+//			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
+//
+//			if (!characterStatus.isGroundet) {
+//				if (!characterStatus.isFlyForwardEmpty) {
+//					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
+//				} else {
+//					moveCurrend = new Vector3 (0f, 0f, 0f);
+//				}
+//			} else if (characterStatus.isGroundet) {
+//				moveCurrend = new Vector3 (0f, 0f, 0f);
+//			}
+//			if (characterStatus.isJump && characterStatus.is) {
+//				rg.velocity = JumpPower * Vector3.up;
+//			}
+//		} else {
+//			characterStatus.OnWall = true;
+//		}
 	}
 
 	void UpdateCrouch ()
@@ -203,7 +225,7 @@ public class CharacterMovement : MonoBehaviour
 			FlyCheck.SetActive (false);
 			characterStatus.isFlyForwardEmpty = false;
 		} else {
-			if (characterStatus.isHang) {
+			if (characterStatus.OnWall) {
 				FlyCheck.SetActive (false);
 				characterStatus.isFlyForwardEmpty = false;
 			} else {
@@ -217,7 +239,7 @@ public class CharacterMovement : MonoBehaviour
 	void ClimpingSystemUpdate ()
 	{
 		if (!isJump && !isUp) {
-			if (Input.GetKeyUp (KeyCode.Space)) {
+			if (characterStatus.isJump) {
 				if (OnWall && !Physics.Raycast (transform.position + Vector3.up * 2.1f, transform.forward, 1)) {
 					isUp = true;
 					newPoint = transform.position + Vector3.up * 2.1f + transform.forward * .5f;
@@ -305,47 +327,6 @@ public class CharacterMovement : MonoBehaviour
 			OnWallCanLocomtion = false;
 		}
 	}
-
-	//	#region HangUpdate
-	//
-	//	void HangUpdate ()
-	//	{
-	//		HangConfigs ();
-	//		HangOnWallBool ();
-	//		HangWall ();
-	//	}
-	//
-	//	void HangConfigs ()
-	//	{
-	//		if (characterStatus.isWall) {
-	//			rg.useGravity = false;
-	//		} else {
-	//			rg.useGravity = true;
-	//		}
-	//	}
-	//
-	//	void HangOnWallBool ()
-	//	{
-	//		if (characterStatus.isHang) {
-	//			characterStatus.isWall = true;
-	//			OnWall = true;
-	//		} else if (!characterStatus.isHang && ComeTime == 0) {
-	//			characterStatus.isWall = false;
-	//			OnWall = false;
-	//		}
-	//	}
-	//
-	//	void HangWall ()
-	//	{
-	//		if(OnWall)
-	//		{
-	//			transform.position = Vector3.Slerp(transform.position,new Vector3 (hangPosnNow))
-	//		}
-	//	}
-	//
-	//	#endregion
-
-
 
 	void FixedUpdate ()
 	{
