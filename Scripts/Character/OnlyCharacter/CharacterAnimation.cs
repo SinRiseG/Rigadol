@@ -5,14 +5,15 @@ using UnityEngine;
 public class CharacterAnimation : MonoBehaviour
 {
 
-	public Animator anim;
-	public CharacterInput characterInput;
-	public CharacterState characterStatus;
-	public CharacterMovement characterMovement;
+	private Animator anim;
+	private CharacterInput characterInput;
+	private CharacterState characterStatus;
+	private CharacterMovement characterMovement;
 
-
+	[Header ("Чистота перехода анимации.")]
 	public float dampTime;
-
+	[Space (5)]
+	[Header ("Время свободного подения персонажа.")]
 	public float flyTime;
 
 	bool lowDown;
@@ -23,12 +24,26 @@ public class CharacterAnimation : MonoBehaviour
 	bool jlong;
 	bool jhard;
 
+	[HideInInspector]
 	public bool jump;
 
 	float moveAmound;
+	[HideInInspector]
 	public float t;
+	[HideInInspector]
 	public float timejump;
+	[HideInInspector]
 	public float hanguptime;
+
+	void Start ()
+	{
+		anim = GetComponent<Animator> ();
+		characterInput = GetComponent<CharacterInput> ();
+		characterStatus = GetComponent<CharacterState> ();
+		characterMovement = GetComponent<CharacterMovement> ();
+	}
+
+
 
 	public void AnimationUpdate ()
 	{
