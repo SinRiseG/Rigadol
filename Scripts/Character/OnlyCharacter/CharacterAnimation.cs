@@ -26,8 +26,8 @@ public class CharacterAnimation : MonoBehaviour
 
 	[HideInInspector]
 	public bool jump;
-
-	float moveAmound;
+	[HideInInspector]
+	public float moveAmound;
 	[HideInInspector]
 	public float t;
 	[HideInInspector]
@@ -50,19 +50,24 @@ public class CharacterAnimation : MonoBehaviour
 		AnimationLocomotion ();
 		BattleAnimationUpdate ();
 		BattleLocomotionAnimationUpdate ();
-		DiveUpdate ();
 		DownUpdate ();
 		FlyUpdate ();
 		CrouchUpdate ();
-		HangUpdate ();
+		OnWallUpdate ();
 	}
 
 	void AnimationLocomotion ()
 	{
 		moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
-		moveAmound = Mathf.Clamp (moveAmound, 0, 1);
-
+		if (!characterStatus.isSprint) {
+			
+			moveAmound = Mathf.Clamp (moveAmound, 0, 0.7f);
+		} else {
+			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
+		}
 		anim.SetFloat ("MoveAmound", moveAmound, dampTime, Time.deltaTime);
+
+
 	}
 
 	void BattleAnimationUpdate ()
@@ -85,14 +90,6 @@ public class CharacterAnimation : MonoBehaviour
 	{
 		anim.SetTrigger ("test");
 
-	}
-
-	void DiveUpdate ()
-	{
-		if (characterStatus.isDive) {
-			anim.SetTrigger ("dive");
-		}
-		anim.SetBool ("tDive", characterStatus.isDive);
 	}
 
 	void FlyUpdate ()
@@ -146,12 +143,22 @@ public class CharacterAnimation : MonoBehaviour
 		anim.SetBool ("Crouch", characterStatus.isCrouch);
 	}
 
-	void HangUpdate ()
+	void OnWallUpdate ()
 	{
 		anim.SetBool ("OnWall", characterMovement.OnWallAnimation);
 		anim.SetBool ("HangJump", characterMovement.hangJumpAnimation);
 		anim.SetBool ("UpWall", characterMovement.UpWallAnimation);
 		if (characterMovement.OnWallCanLocomtion) {
+			if (!characterMovement.CanOnWallMoveLeft) {
+				characterInput.Horizontal = Mathf.Clamp (characterInput.Horizontal, 0, 1);
+			} else {
+				characterInput.Horizontal = Mathf.Clamp (characterInput.Horizontal, -1, 1);
+			}
+			if (!characterMovement.CanOnWallMoveRight) {
+				characterInput.Horizontal = Mathf.Clamp (characterInput.Horizontal, -1, 0);
+			} else {
+				characterInput.Horizontal = Mathf.Clamp (characterInput.Horizontal, -1, 1);
+			}
 			anim.SetFloat ("OnWallH", characterInput.Horizontal);
 		}
 	}

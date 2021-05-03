@@ -937,7 +937,7 @@ GameObject:
   - component: {fileID: 114629518090258320}
   - component: {fileID: 114062569469329920}
   m_Layer: 5
-  m_Name: Dive
+  m_Name: Sprint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2319,7 +2319,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114947098081885818}
-        m_MethodName: OnDiveState
+        m_MethodName: OnSprintState
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2398,7 +2398,7 @@ MonoBehaviour:
   OnWallAnimation: 0
   UpWallAnimation: 0
   hangJumpAnimation: 0
-  test: 0
+  HaveOnWall: 0
   dir: 0
 --- !u!114 &114203434645757022
 MonoBehaviour:
@@ -3066,8 +3066,9 @@ MonoBehaviour:
   Horizontal: 0
   MouseX: 0
   MouseY: 0
+  jump: 0
   time: 0
-  Mobile: 1
+  Mobile: 0
   FixedMouse: 20
   moveJoystick: {fileID: 114085702637846462}
   touchFild: {fileID: 114975542223757608}
@@ -3089,11 +3090,9 @@ MonoBehaviour:
   isDive: 0
   isJump: 0
   isCrouch: 0
-  isWall: 0
+  OnWall: 0
   isCrouchEmpty: 0
   isFlyForwardEmpty: 0
-  isHang: 0
-  CanHangUp: 0
 --- !u!114 &114975542223757608
 MonoBehaviour:
   m_ObjectHideFlags: 1

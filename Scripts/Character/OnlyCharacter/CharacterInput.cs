@@ -27,8 +27,8 @@ public class CharacterInput : MonoBehaviour
 	bool battle;
 	//айди кнопки аттаки
 	int attackID;
-	//айди кнопки кувырка
-	int diveID;
+	//айди кнопки бега
+	int sprintID;
 	//айди кнопки присяда
 	int crouchID;
 	//Показатель состояния персонажа приседа
@@ -38,19 +38,21 @@ public class CharacterInput : MonoBehaviour
 	public bool jump;
 	[HideInInspector]
 	public float time;
+	[HideInInspector]
+	public float timeJump;
 
 	[Space (10)]
-	[Header ("Переключения управления на мобильое ")]
+	[Header ("Переключения управления на мобильое.")]
 	public bool Mobile;
-	[Header ("Мобильные компоненты управления")]
+	[Header ("Мобильные компоненты управления.")]
 	//для мобильного упровления чувствительность
-	[Header ("Чувствительность мобильной камеры ")]
+	[Header ("Чувствительность мобильной камеры.")]
 	public float FixedMouse;
 	[Space (5)]
-	[Header ("Джойстик для передвижения")]
+	[Header ("Джойстик для передвижения.")]
 	public MoviJoystick moveJoystick;
 	[Space (5)]
-	[Header ("Джойстик для движения камерой")]
+	[Header ("Джойстик для движения камерой.")]
 	public FixedTouchFild touchFild;
 
 	//Метод старт в котором я переменным указываю компонент других скриптов для дальнеёшего их использования
@@ -66,7 +68,8 @@ public class CharacterInput : MonoBehaviour
 		// компонент не обходимый не зависимо от вида упровления мобильного или пк 
 		CheckBattleOrCrouchUpdate ();
 		JumpUpdate ();
-
+		BattelUpdate ();
+		SprintUpdate ();
 
 		if (!Mobile) {
 			// метод упровления с пк
@@ -91,6 +94,7 @@ public class CharacterInput : MonoBehaviour
 			PCBattelUpdate ();
 			PCAttackUpdate ();
 			PCCrouchUpdate ();
+			PCSprintState ();
 		}
 	}
 	// стандартное управления
@@ -105,27 +109,19 @@ public class CharacterInput : MonoBehaviour
 	// режим битвы
 	void PCBattelUpdate ()
 	{
-		
-		if (characterState.isGroundet) {
-			if (!characterState.isCrouchEmpty) {
-				if (Input.GetMouseButtonDown (1)) {
-					battleID += 1;
-				} 
-
-				if (battleID == 0) {
-					characterState.isBattle = false;
-				} else if (battleID == 1) {
-					characterState.isBattle = true;
-				} else {
-					battleID = 0;
-				}
-			}
-		} else {
-			characterState.isBattle = false;
+		if (!characterState.isCrouchEmpty) {
+			if (Input.GetMouseButtonDown (1)) {
+				battleID += 1;
+			} 
 		}
-
 	}
-
+	//метод быстрого бега
+	void PCSprintState ()
+	{
+		if (Input.GetKeyDown (KeyCode.LeftShift)) {
+			sprintID += 1;
+		}
+	}
 	// метод аттаки
 	void PCAttackUpdate ()
 	{
@@ -137,7 +133,7 @@ public class CharacterInput : MonoBehaviour
 
 		}
 	}
-
+	//метод прыжка
 	void PCJumpUpdate ()
 	{
 		if (!characterState.isBattle) {
@@ -179,8 +175,6 @@ public class CharacterInput : MonoBehaviour
 	void InputMobile ()
 	{
 		MoboilLocomotionUpdate ();
-		MBattleUpdate ();
-		MDiveUpdate ();
 		MCrouchUpdate ();
 	}
 
@@ -193,35 +187,12 @@ public class CharacterInput : MonoBehaviour
 		MouseY = touchFild.touchDist.y / FixedMouse;
 	}
 
-	#region BattelControll
-
-	void MBattleUpdate ()
-	{
-		if (characterState.isGroundet) {
-			if (battleID == 0) {
-				characterState.isBattle = false;
-			} else if (battleID == 1) {
-				characterState.isBattle = true;
-			} else {
-				battleID = 0;
-			}
-		} else {
-			battleID = 0;
-			characterState.isBattle = false;
-		}
-	}
-
 	public void OnBattleState ()
 	{
 		if (!characterState.isCrouchEmpty) {
 			battleID += 1;
 		}
 	}
-
-	#endregion
-
-	#region AttackControll
-
 
 	public void OnAttackState ()
 	{
@@ -230,46 +201,42 @@ public class CharacterInput : MonoBehaviour
 		}
 	}
 
-
-
-	#endregion
-
-	#region Jump
-
 	public void OnJompState ()
 	{
 		jump = true;
 	}
 
-	#endregion
-
-	#region MDive
-
-	void MDiveUpdate ()
+	public void OnSprintState ()
 	{
-		if (characterState.isGroundet) {
-			if (diveID != 0) {
-				time += Time.deltaTime;
-				characterState.isDive = true;
-				if (time > 0.1) {
-					diveID = 0;
-					time = 0;
-					characterState.isDive = false;
-				}
-
-			}
-		} else {
-			diveID = 0;
-			characterState.isDive = false;
-		}
+		sprintID += 1;
 	}
 
-	public void OnDiveState ()
-	{
-		if (characterState.isGroundet) {
-			diveID += 1;
-		}
-	}
+		
+	//	void SprintUpdate ()
+	//	{
+	//		if (characterState.isGroundet) {
+	//			if (diveID != 0) {
+	//				time += Time.deltaTime;
+	//				characterState.isDive = true;
+	//				if (time > 0.1) {
+	//					diveID = 0;
+	//					time = 0;
+	//					characterState.isDive = false;
+	//				}
+	//
+	//			}
+	//		} else {
+	//			diveID = 0;
+	//			characterState.isDive = false;
+	//		}
+	//	}
+	//
+	//	public void SprintState ()
+	//	{
+	//		if (characterState.isGroundet) {
+	//			diveID += 1;
+	//		}
+	//	}
 
 	#endregion
 
@@ -299,22 +266,69 @@ public class CharacterInput : MonoBehaviour
 
 	#endregion
 
-	#endregion
 
 	void JumpUpdate ()
 	{
-		characterState.isJump = jump;
-		float time = 0f;
 		if (jump) {
-			time += Time.deltaTime;
-			if (time > 0.1) {
+			timeJump += Time.deltaTime;
+			if (timeJump > 0.1) {
 				jump = false;
-				time = 0f;
+				timeJump = 0f;
 			}
+		}
+		if (!characterState.isGroundet && !characterState.OnWall) {
+			jump = false;
+			timeJump = 0;
+		}
+		characterState.isJump = jump;
+	}
+
+	void BattelUpdate ()
+	{
+		if (characterState.isGroundet) {
+			if (battleID == 0) {
+				characterState.isBattle = false;
+			} else if (battleID == 1) {
+				characterState.isBattle = true;
+			} else {
+				battleID = 0;
+			}
+		} else {
+			battleID = 0;
+			characterState.isBattle = false;
 		}
 	}
 
+	void SprintUpdate ()
+	{
+		if (characterState.isGroundet && !characterState.isCrouchEmpty && !characterState.isCrouch && !characterState.OnWall && characterAnimation.moveAmound != 0) {
+			if (sprintID == 0)
+				characterState.isSprint = false;
+			else if (sprintID == 1)
+				characterState.isSprint = true;
+			else
+				sprintID = 0;
+		} else {
+			sprintID = 0;
+			characterState.isSprint = false;
+		}
+	}
 
+	void CheckBattleOrCrouchUpdate ()
+	{
+		if (!characterState.isCrouchEmpty) {
+			if (characterState.isBattle) {
+				crouchID = 0;
+				battle = true;
+			} else {
+				battle = false;
+			}
+		} else {
+			battle = false;
+			battleID = 0;
+			crouchID = 1;
+		}
+	}
 
 
 	//Регион работы чекеров ...
@@ -336,21 +350,6 @@ public class CharacterInput : MonoBehaviour
 		characterState.isFlyForwardEmpty = _flyCheck;
 	}
 
-	void CheckBattleOrCrouchUpdate ()
-	{
-		if (!characterState.isCrouchEmpty) {
-			if (characterState.isBattle) {
-				crouchID = 0;
-				battle = true;
-			} else {
-				battle = false;
-			}
-		} else {
-			battle = false;
-			battleID = 0;
-			crouchID = 1;
-		}
-	}
 
 	#endregion
 }

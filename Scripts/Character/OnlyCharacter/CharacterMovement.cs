@@ -38,13 +38,15 @@ public class CharacterMovement : MonoBehaviour
 	[HideInInspector]
 	public int CrouchIt = 0;
 	[Space (5)]
-	[Header ("Чекер полёта персонажа в перёд")]
+	[Header ("Чекер полёта персонажа в перёд.")]
 	public GameObject FlyCheck;
-
+	[Header ("Лист хелперов.")]
 	public List<Collider> helpers;
 	public bool OnWall;
 	public bool isJump;
 	public bool isUp;
+	public bool CanOnWallMoveRight;
+	public bool CanOnWallMoveLeft;
 	public Collider col;
 	//Куда двигаемся
 	public Collider ColMove;
@@ -124,12 +126,6 @@ public class CharacterMovement : MonoBehaviour
 			UpdateCrouch ();
 			FlyUpdate ();
 		}
-//		for (int i = 0; i < helpers.Count; i++) {
-//			if (helpers [i] == 0)
-//				test = false;
-//			else
-//				test = true;
-//		}
 		ClimpingSystemUpdate ();
 	}
 
@@ -180,27 +176,6 @@ public class CharacterMovement : MonoBehaviour
 		} else {
 			characterStatus.OnWall = true;
 		}
-
-//		if (!test) {
-//			characterStatus.OnWall = false;
-//			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
-//			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
-//
-//			if (!characterStatus.isGroundet) {
-//				if (!characterStatus.isFlyForwardEmpty) {
-//					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
-//				} else {
-//					moveCurrend = new Vector3 (0f, 0f, 0f);
-//				}
-//			} else if (characterStatus.isGroundet) {
-//				moveCurrend = new Vector3 (0f, 0f, 0f);
-//			}
-//			if (characterStatus.isJump && characterStatus.is) {
-//				rg.velocity = JumpPower * Vector3.up;
-//			}
-//		} else {
-//			characterStatus.OnWall = true;
-//		}
 	}
 
 	void UpdateCrouch ()
@@ -304,24 +279,26 @@ public class CharacterMovement : MonoBehaviour
 			}
 		}
 		if (OnWall && !isJump && !isUp) {
-			if (characterInput.Horizontal != 0) {
-				if (characterInput.Horizontal > 0) {
-					dir = .5f;
-				} else if (characterInput.Horizontal < 0) {
-					dir = -.5f;
-				}
-				if (ColMove != null) {
-					RaycastHit hit;
-					if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * dir, transform.forward, out hit, 1f)) {
-						if (hit.collider == ColMove) {
-							OnWallCanLocomtion = true;
-						} else {
-							OnWallCanLocomtion = false;
-						}
+			OnWallCanLocomtion = true;
+			if (ColMove != null) {
+				RaycastHit hitLeft;
+				if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, out hitLeft, 1f)) {
+					if (hitLeft.collider == ColMove) {
+						CanOnWallMoveLeft = true;
+					} else {
+						CanOnWallMoveLeft = false;
 					}
-					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * dir, transform.forward, Color.red);
-
 				}
+				Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, Color.red);
+				RaycastHit hitRight;
+				if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, out hitRight, 1f)) {
+					if (hitRight.collider == ColMove) {
+						CanOnWallMoveRight = true;
+					} else {
+						CanOnWallMoveRight = false;
+					}
+				}
+				Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, Color.red);
 			}
 		} else {
 			OnWallCanLocomtion = false;
