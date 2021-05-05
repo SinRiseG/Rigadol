@@ -711,6 +711,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 495180922}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &694582552 stripped
+BoxCollider:
+  m_PrefabParentObject: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+    type: 2}
+  m_PrefabInternal: {fileID: 866982466}
 --- !u!1 &745866649
 GameObject:
   m_ObjectHideFlags: 0
@@ -852,6 +857,36 @@ Prefab:
         type: 2}
       propertyPath: Mobile
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 0.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: m_Size.z
+      value: 1.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: m_Center.z
+      value: 0.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: BoxCliping
+      value: 
+      objectReference: {fileID: 694582552}
+    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: m_Center.y
+      value: 1.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 2.24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 015d1c461d5bd5d41918ed6a91d0c8cb, type: 2}
@@ -1820,6 +1855,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4779319769969518, guid: 622f8986ca635ca4a8d5d0188a0810ca, type: 2}
       propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 65818324215006406, guid: 622f8986ca635ca4a8d5d0188a0810ca,
+        type: 2}
+      propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

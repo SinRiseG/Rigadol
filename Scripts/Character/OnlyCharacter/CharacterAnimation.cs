@@ -94,15 +94,32 @@ public class CharacterAnimation : MonoBehaviour
 
 	void FlyUpdate ()
 	{
-		if (!characterMovement.HaveOnWall) {
-			if (!characterStatus.isGroundet) {
+		if (!characterMovement.HaveOnWall && !characterStatus.OnWall) {
+			if (!characterStatus.isGroundet && !characterStatus.isFlyForwardEmpty) {
 				anim.SetBool ("Fly", true);
-			} else {
+			} else if (!characterStatus.isGroundet && characterStatus.isFlyForwardEmpty) {
+				anim.SetBool ("Fly", true);
+			} else if (characterStatus.isGroundet && characterStatus.isFlyForwardEmpty) {
+				anim.SetBool ("Fly", false);
+			} else if (characterStatus.isGroundet && !characterStatus.isFlyForwardEmpty) {
 				anim.SetBool ("Fly", false);
 			}
-		} else {
+		} else if (characterMovement.HaveOnWall && !characterStatus.OnWall) {
+			if (!characterStatus.isGroundet && !characterStatus.isFlyForwardEmpty) {
+				anim.SetBool ("Fly", true);
+			} else if (!characterStatus.isGroundet && characterStatus.isFlyForwardEmpty) {
+				anim.SetBool ("Fly", true);
+			} else if (characterStatus.isGroundet && characterStatus.isFlyForwardEmpty) {
+				anim.SetBool ("Fly", false);
+			} else if (characterStatus.isGroundet && !characterStatus.isFlyForwardEmpty) {
+				anim.SetBool ("Fly", false);
+			}
+		} else if (characterMovement.HaveOnWall && characterStatus.OnWall) {
 			anim.SetBool ("Fly", false);
 		}
+		//else {
+//			anim.SetBool ("Fly", false);
+//		}
 	}
 
 	void DownUpdate ()

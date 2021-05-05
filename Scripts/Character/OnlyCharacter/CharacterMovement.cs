@@ -42,6 +42,9 @@ public class CharacterMovement : MonoBehaviour
 	public GameObject FlyCheck;
 	[Header ("Лист хелперов.")]
 	public List<Collider> helpers;
+	[Space (5)]
+	[Header ("Бокс колайдер для клипинга.")]
+	public BoxCollider BoxCliping;
 	public bool OnWall;
 	public bool isJump;
 	public bool isUp;
@@ -98,13 +101,15 @@ public class CharacterMovement : MonoBehaviour
 
 	void  OnTriggerEnter (Collider col)
 	{
-		if (col.tag == "Helpers" && col.isTrigger) {
-			int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
-			if (index == -1) {
-				HaveOnWall = true;
-				helpers.Add (col);
-			}
+		if (!isFlyClimping) {
+			if (col.tag == "Helpers" && col.isTrigger) {
+				int index = helpers.FindIndex (x => x.gameObject == col.gameObject);
+				if (index == -1) {
+					HaveOnWall = true;
+					helpers.Add (col);
+				}
 			
+			}
 		}
 	}
 
@@ -159,8 +164,39 @@ public class CharacterMovement : MonoBehaviour
 
 	void JumpUdpate ()
 	{
+//		if (isFlyClimping && HaveOnWall) {
+//			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
+//			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
+//			if (!characterStatus.isGroundet) {
+//				if (!characterStatus.isFlyForwardEmpty) {
+//					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
+//				} else {
+//					moveCurrend = new Vector3 (0f, 0f, 0f);
+//				}
+//			} else {
+//				moveCurrend = new Vector3 (0f, 0f, 0f);
+//				if (characterStatus.isJump) {
+//					rg.velocity = JumpPower * Vector3.up;
+//				}
+//			}
+//		} else if (isFlyClimping && !HaveOnWall) {
+//			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
+//			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
+//			if (!characterStatus.isGroundet) {
+//				if (!characterStatus.isFlyForwardEmpty) {
+//					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
+//				} else {
+//					moveCurrend = new Vector3 (0f, 0f, 0f);
+//				}
+//			} else {
+//				moveCurrend = new Vector3 (0f, 0f, 0f);
+//				if (characterStatus.isJump) {
+//					rg.velocity = JumpPower * Vector3.up;
+//				}
+//			}
+//		}
+//
 		if (!HaveOnWall) {
-			characterStatus.OnWall = false;
 			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
 			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
 			if (!characterStatus.isGroundet) {
@@ -175,8 +211,6 @@ public class CharacterMovement : MonoBehaviour
 					rg.velocity = JumpPower * Vector3.up;
 				}
 			}
-		} else {
-			characterStatus.OnWall = true;
 		}
 	}
 
@@ -198,116 +232,118 @@ public class CharacterMovement : MonoBehaviour
 
 	void FlyUpdate ()
 	{
-		if (characterStatus.isGroundet) {
+		if (characterStatus.isGroundet && !OnWall) {
 			FlyCheck.SetActive (false);
 			characterStatus.isFlyForwardEmpty = false;
-		} else {
-			if (characterStatus.OnWall) {
-				FlyCheck.SetActive (false);
-				characterStatus.isFlyForwardEmpty = false;
-			} else {
-				if (moveAmound != 0) {
-					FlyCheck.SetActive (true);
-				}
-			}
+			BoxCliping.enabled = true;
+			isFlyClimping = false;
+		} else if (!characterStatus.isGroundet && !OnWall) {
+			FlyCheck.SetActive (true);
+			BoxCliping.enabled = false;
+			isFlyClimping = true;
+		} else if (!characterStatus.isGroundet && OnWall) {
+			FlyCheck.SetActive (false);
+			BoxCliping.enabled = true;
+			characterStatus.isFlyForwardEmpty = false;
+			isFlyClimping = false;
 		}
 	}
 
 	void ClimpingSystemUpdate ()
 	{
-		if (!isJump && !isUp) {
-			if (characterStatus.isJump) {
-				if (OnWall && !Physics.Raycast (transform.position + Vector3.up * 2.1f, transform.forward, 1)) {
-					isUp = true;
-					newPoint = transform.position + Vector3.up * 2.1f + transform.forward * .5f;
-					OnWallAnimation = false;
-					UpWallAnimation = true;
+		characterStatus.OnWall = OnWall;
+		if (!isFlyClimping) {
+			if (!isJump && !isUp) {
+				if (characterStatus.isJump) {
+					if (OnWall && !Physics.Raycast (transform.position + Vector3.up * 2.1f, transform.forward, 1)) {
+						isUp = true;
+						newPoint = transform.position + Vector3.up * 2.1f + transform.forward * .5f;
+						OnWallAnimation = false;
+						UpWallAnimation = true;
 
-				} else {
-					col = null;
-					for (int i = 0; i < helpers.Count; i++) {
-						if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
-							if (col == null)
-								col = helpers [i];
-							else if (helpers [i].bounds.max.y > col.bounds.max.y)
-								col = helpers [i];
+					} else {
+						col = null;
+						for (int i = 0; i < helpers.Count; i++) {
+							if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
+								if (col == null)
+									col = helpers [i];
+								else if (helpers [i].bounds.max.y > col.bounds.max.y)
+									col = helpers [i];
+							}
 						}
-					}
-					if (col != null) {
-						Ray ray = new Ray (
-							          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
-							          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
-						          );
-						RaycastHit hit;
-						if (Physics.Raycast (ray, out hit, 2.5f)) {
-							ColMove = col;
-							newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
-							isJump = true;
-							locomotionCollider.enabled = false;
-							crouchCollider.enabled = false;
-							rg.useGravity = false;
-							if (!OnWall) {
-								OnWall = true;
-								OnWallAnimation = true;
-							} else {
-								hangJumpAnimation = true;
+						if (col != null) {
+							Ray ray = new Ray (
+								          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
+								          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
+							          );
+							RaycastHit hit;
+							if (Physics.Raycast (ray, out hit, 2.5f)) {
+								ColMove = col;
+								newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
+								isJump = true;
+								locomotionCollider.enabled = false;
+								crouchCollider.enabled = false;
+								rg.useGravity = false;
+								if (!OnWall) {
+									OnWall = true;
+									OnWallAnimation = true;
+								} else {
+									hangJumpAnimation = true;
+								}
 							}
 						}
 					}
 				}
 			}
-		}
-		if (isJump && !isUp) {
-			distance = Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z));
-			if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .1f) {
-				transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
-				transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), 5f * Time.deltaTime);
-				Debug.Log ("Work jump");
-			} else {
-				isJump = false;
-				hangJumpAnimation = false;
-				Debug.Log ("not Work jump");
-			}
-		} else if (OnWall && isUp) {
-			if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
-				if (transform.position.y < newPoint.y - .1f) {
-					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), 10f * Time.deltaTime);
+			if (isJump && !isUp) {
+				distance = Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z));
+				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .1f) {
+					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
+					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), 5f * Time.deltaTime);
 				} else {
-					transform.position = Vector3.Slerp (transform.position, newPoint, 5f * Time.deltaTime);
+					isJump = false;
+					hangJumpAnimation = false;
+				}
+			} else if (OnWall && isUp) {
+				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
+					if (transform.position.y < newPoint.y - .1f) {
+						transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), 10f * Time.deltaTime);
+					} else {
+						transform.position = Vector3.Slerp (transform.position, newPoint, 5f * Time.deltaTime);
+					}
+				} else {
+					rg.useGravity = true;
+					locomotionCollider.enabled = true;
+					OnWall = false;
+					isJump = false;
+					isUp = false;
+				}
+			}
+			if (OnWall && !isJump && !isUp) {
+				OnWallCanLocomtion = true;
+				if (ColMove != null) {
+					RaycastHit hitLeft;
+					if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, out hitLeft, 1f)) {
+						if (hitLeft.collider == ColMove) {
+							CanOnWallMoveLeft = true;
+						} else {
+							CanOnWallMoveLeft = false;
+						}
+					}
+					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, Color.red);
+					RaycastHit hitRight;
+					if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, out hitRight, 1f)) {
+						if (hitRight.collider == ColMove) {
+							CanOnWallMoveRight = true;
+						} else {
+							CanOnWallMoveRight = false;
+						}
+					}
+					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, Color.red);
 				}
 			} else {
-				rg.useGravity = true;
-				locomotionCollider.enabled = true;
-				OnWall = false;
-				isJump = false;
-				isUp = false;
+				OnWallCanLocomtion = false;
 			}
-		}
-		if (OnWall && !isJump && !isUp) {
-			OnWallCanLocomtion = true;
-			Debug.Log ("Work on wall");
-			if (ColMove != null) {
-				RaycastHit hitLeft;
-				if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, out hitLeft, 1f)) {
-					if (hitLeft.collider == ColMove) {
-						CanOnWallMoveLeft = true;
-					} else {
-						CanOnWallMoveLeft = false;
-					}
-				}
-				Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, Color.red);
-				RaycastHit hitRight;
-				if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, out hitRight, 1f)) {
-					if (hitRight.collider == ColMove) {
-						CanOnWallMoveRight = true;
-					} else {
-						CanOnWallMoveRight = false;
-					}
-				}
-				Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, Color.red);
-			}
-		} else {
-			OnWallCanLocomtion = false;
 		}
 	}
 
