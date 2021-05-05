@@ -215,7 +215,6 @@ public class CharacterMovement : MonoBehaviour
 
 	void ClimpingSystemUpdate ()
 	{
-		BoxColliderUpdate ();
 		if (!isJump && !isUp) {
 			if (characterStatus.isJump) {
 				if (OnWall && !Physics.Raycast (transform.position + Vector3.up * 2.1f, transform.forward, 1)) {
@@ -309,58 +308,6 @@ public class CharacterMovement : MonoBehaviour
 			}
 		} else {
 			OnWallCanLocomtion = false;
-		}
-	}
-
-	void BoxColliderUpdate ()
-	{
-		if (!isJump && !OnWall && !isUp && !characterStatus.isGroundet) {
-			//if (HaveOnWall) {
-			col = null;
-			for (int i = 0; i < helpers.Count; i++) {
-				if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
-					if (col == null)
-						col = helpers [i];
-					else if (helpers [i].bounds.max.y > col.bounds.max.y)
-						col = helpers [i];
-				}
-			}
-			if (col != null && !isFlyClimping) {
-				Debug.Log ("ISFLy");
-				Ray ray = new Ray (
-					          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
-					          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
-				          );
-				RaycastHit hit;
-				if (Physics.Raycast (ray, out hit, 2.5f)) {
-					ColMove = col;
-					newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
-					isFlyClimping = true;
-					locomotionCollider.enabled = false;
-					crouchCollider.enabled = false;
-					rg.useGravity = false;
-					if (!OnWall) {
-						OnWall = true;
-						OnWallAnimation = true;
-					} else {
-						hangJumpAnimation = true;
-					}
-				}
-
-				//}
-			}
-			if (isFlyClimping) {
-				distance = Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z));
-				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .1f) {
-					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
-					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), 5f * Time.deltaTime);
-					Debug.Log ("Work jump");
-				} else {
-					isFlyClimping = false;
-					hangJumpAnimation = false;
-					Debug.Log ("not Work jump");
-				}
-			}
 		}
 	}
 
