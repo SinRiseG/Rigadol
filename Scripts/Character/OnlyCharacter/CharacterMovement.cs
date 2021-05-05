@@ -45,7 +45,11 @@ public class CharacterMovement : MonoBehaviour
 	[Space (5)]
 	[Header ("Бокс колайдер для клипинга.")]
 	public BoxCollider BoxCliping;
+	[Space (5)]
+	[Header ("Скорость прыжка на стене")]
+	public float SpeedOnWallJump;
 	public bool OnWall;
+	public bool OnWallJump;
 	public bool isJump;
 	public bool isUp;
 	public bool isFlyClimping;
@@ -299,7 +303,7 @@ public class CharacterMovement : MonoBehaviour
 				distance = Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z));
 				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .1f) {
 					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
-					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), 5f * Time.deltaTime);
+					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
 				} else {
 					isJump = false;
 					hangJumpAnimation = false;

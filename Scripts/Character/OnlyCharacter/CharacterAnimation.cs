@@ -162,6 +162,7 @@ public class CharacterAnimation : MonoBehaviour
 
 	void OnWallUpdate ()
 	{
+		anim.SetBool ("OnWallJump", characterMovement.OnWallJump);
 		anim.SetBool ("OnWall", characterMovement.OnWallAnimation);
 		anim.SetBool ("HangJump", characterMovement.hangJumpAnimation);
 		anim.SetBool ("UpWall", characterMovement.UpWallAnimation);

@@ -812,6 +812,11 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: helpers.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4035483578729112, guid: 015d1c461d5bd5d41918ed6a91d0c8cb, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -881,12 +886,17 @@ Prefab:
     - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
         type: 2}
       propertyPath: m_Center.y
-      value: 1.45
+      value: 1.6
       objectReference: {fileID: 0}
     - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
         type: 2}
       propertyPath: m_Size.y
       value: 2.24
+      objectReference: {fileID: 0}
+    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
+        type: 2}
+      propertyPath: SpeedOnWallJump
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 015d1c461d5bd5d41918ed6a91d0c8cb, type: 2}
