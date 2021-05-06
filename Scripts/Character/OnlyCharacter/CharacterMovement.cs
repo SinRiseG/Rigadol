@@ -48,6 +48,10 @@ public class CharacterMovement : MonoBehaviour
 	[Space (5)]
 	[Header ("Скорость прыжка на стене")]
 	public float SpeedOnWallJump;
+	[Space (5)]
+	[Header ("Скорость подъёма на стену")]
+	public float speedUp;
+	public float speedForward;
 	public bool OnWall;
 	public bool OnWallJump;
 	public bool isJump;
@@ -301,7 +305,7 @@ public class CharacterMovement : MonoBehaviour
 			}
 			if (isJump && !isUp) {
 				distance = Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z));
-				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .1f) {
+				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .05f) {
 					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
 					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
 				} else {
@@ -310,10 +314,10 @@ public class CharacterMovement : MonoBehaviour
 				}
 			} else if (OnWall && isUp) {
 				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
-					if (transform.position.y < newPoint.y - .1f) {
-						transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), 10f * Time.deltaTime);
+					if (transform.position.y < newPoint.y - .05f) {
+						transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), speedUp * Time.deltaTime);
 					} else {
-						transform.position = Vector3.Slerp (transform.position, newPoint, 5f * Time.deltaTime);
+						transform.position = Vector3.Slerp (transform.position, newPoint, speedForward * Time.deltaTime);
 					}
 				} else {
 					rg.useGravity = true;
