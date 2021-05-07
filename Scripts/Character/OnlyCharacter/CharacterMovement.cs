@@ -266,18 +266,35 @@ public class CharacterMovement : MonoBehaviour
 								          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
 							          );
 							RaycastHit hit;
-							if (Physics.Raycast (ray, out hit, 2.5f)) {
-								ColMove = col;
-								newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
-								isJump = true;
-								locomotionCollider.enabled = false;
-								crouchCollider.enabled = false;
-								rg.useGravity = false;
-								if (!OnWall) {
-									OnWall = true;
-									OnWallAnimation = true;
-								} else {
-									hangJumpAnimation = true;
+							if (!OnWall) {
+								if (Physics.Raycast (ray, out hit, 2.5f)) {
+									ColMove = col;
+									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.33f + Vector3.up * -1.91f;
+									isJump = true;
+									locomotionCollider.enabled = false;
+									crouchCollider.enabled = false;
+									rg.useGravity = false;
+									if (!OnWall) {
+										OnWall = true;
+										OnWallAnimation = true;
+									} else {
+										hangJumpAnimation = true;
+									}
+								}
+							} else {
+								if (Physics.Raycast (ray, out hit, 1.5f)) {
+									ColMove = col;
+									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.33f + Vector3.up * -1.91f;
+									isJump = true;
+									locomotionCollider.enabled = false;
+									crouchCollider.enabled = false;
+									rg.useGravity = false;
+									if (!OnWall) {
+										OnWall = true;
+										OnWallAnimation = true;
+									} else {
+										hangJumpAnimation = true;
+									}
 								}
 							}
 						}
@@ -320,9 +337,9 @@ public class CharacterMovement : MonoBehaviour
 				}
 			}
 			if (isJump && !isUp) {
-				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
+				if (Vector3.Distance (transform.position, new Vector3 (newPoint.x, newPoint.y, newPoint.z)) > .02f) {
 					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
-					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
+					transform.position = Vector3.Slerp (transform.position, new Vector3 (newPoint.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
 				} else {
 					isJump = false;
 					hangJumpAnimation = false;
@@ -387,6 +404,26 @@ public class CharacterMovement : MonoBehaviour
 				}
 			} else {
 				OnWallCanLocomtion = false;
+			}
+			DebugLineCliping ();
+		}
+	}
+
+	void  DebugLineCliping ()
+	{
+		if (helpers != null) {
+			for (int i = 0; i < helpers.Count; i++) {
+				if (ColMove != null) {
+					if (helpers [i].bounds.max.y > ColMove.bounds.max.y) {
+						Debug.DrawLine (transform.position + transform.up * 1.7f, new Vector3 (transform.position.x, helpers [i].transform.position.y, helpers [i].transform.position.z), Color.green);
+					} else if (helpers [i].bounds.max.y == ColMove.bounds.max.y) {
+						Debug.DrawLine (transform.position + transform.up * 1.7f, new Vector3 (transform.position.x, helpers [i].transform.position.y, helpers [i].transform.position.z), Color.white);
+					} else if (helpers [i].bounds.max.y < ColMove.bounds.max.y) {
+						Debug.DrawLine (transform.position + transform.up * 1.7f, new Vector3 (transform.position.x, helpers [i].transform.position.y, helpers [i].transform.position.z), Color.black);
+					}
+				} else {
+					Debug.DrawLine (transform.position + transform.up * 1.8f, helpers [i].transform.position, Color.green);
+				}
 			}
 		}
 	}
