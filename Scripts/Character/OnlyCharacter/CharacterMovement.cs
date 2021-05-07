@@ -48,6 +48,7 @@ public class CharacterMovement : MonoBehaviour
 	[Space (5)]
 	[Header ("Скорость прыжка на стене")]
 	public float SpeedOnWallJump;
+	public float SpeedOnWallDown;
 	[Space (5)]
 	[Header ("Скорость подъёма на стену")]
 	public float speedUp;
@@ -56,6 +57,10 @@ public class CharacterMovement : MonoBehaviour
 	public bool OnWallJump;
 	public bool isJump;
 	public bool isUp;
+	public bool isJumpDown;
+	public int DownInt;
+	public bool DownJump;
+	public bool isDown;
 	public bool isFlyClimping;
 	public bool CanOnWallMoveRight;
 	public bool CanOnWallMoveLeft;
@@ -70,31 +75,6 @@ public class CharacterMovement : MonoBehaviour
 	public bool hangJumpAnimation;
 	public bool HaveOnWall;
 	public float dir;
-	//	[Space (10)]
-	//	[Header ("Система лазанья по стенам")]
-	//	public float ComeTime;
-	//	[Header ("Скорость подъема на преграда")]
-	//	public float SpeedUp;
-	//
-	//	private bool Stay;
-	//	private bool jump;
-	//	private bool Wall;
-	//public bool OnWall;
-	//	public bool OnJump;
-	//
-	//	//Зацепление сейчас
-	//	public Transform hangPos;
-	//	public Transform hangPosnNow;
-	//
-	//	public Transform ShangPos;
-	//	public Transform ShangPosNow;
-	//	//Верхняя точка
-	//	public Transform HangUp;
-	//	public Transform HangPosUp;
-	//
-	//	public Transform ShandUp;
-	//
-	//	public Vector3 HangVector;
 
 	Vector3 moveCurrend;
 	float moveAmound;
@@ -249,6 +229,7 @@ public class CharacterMovement : MonoBehaviour
 			FlyCheck.SetActive (true);
 			BoxCliping.enabled = false;
 			isFlyClimping = true;
+			helpers.Clear ();
 		} else if (!characterStatus.isGroundet && OnWall) {
 			FlyCheck.SetActive (false);
 			BoxCliping.enabled = true;
@@ -303,14 +284,59 @@ public class CharacterMovement : MonoBehaviour
 					}
 				}
 			}
+			if (characterInput.isJumpDown && OnWall && DownInt == 0) {
+				DownInt += 1;
+				for (int i = 0; i < helpers.Count; i++) {
+					if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
+						if (helpers [i].bounds.max.y <= col.bounds.max.y) {
+							if (col.bounds.max.y > helpers [i].bounds.max.y) {
+								col = helpers [i];
+								DownJump = true;
+								isDown = false;
+								Debug.Log ("Can jump down");
+							} else if (!DownJump) { /*if (col.bounds.max.y == helpers [i].bounds.max.y) */
+								isDown = true;
+								Debug.Log ("Go Down");
+							}
+						}
+					}
+				}
+				if (DownJump) {
+					if (col != null) {
+						Ray ray = new Ray (
+							          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
+							          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
+						          );
+						RaycastHit hit;
+						if (Physics.Raycast (ray, out hit, 2.5f)) {
+							ColMove = col;
+							newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
+							isJumpDown = true;
+							DownJump = false;
+						}
+					} else {
+						Debug.Log ("Lol Go Dawn");
+					}
+				}
+			}
 			if (isJump && !isUp) {
-				distance = Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z));
-				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .05f) {
+				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
 					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
 					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
 				} else {
 					isJump = false;
 					hangJumpAnimation = false;
+
+				}
+			} else if (isJumpDown) {
+				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
+					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
+					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), SpeedOnWallDown * Time.deltaTime);
+				} else {
+					isJumpDown = false;
+					DownJump = false;
+					DownInt = 0;
+
 				}
 			} else if (OnWall && isUp) {
 				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
@@ -326,8 +352,18 @@ public class CharacterMovement : MonoBehaviour
 					isJump = false;
 					isUp = false;
 				}
+			} else if (OnWall && isDown) {
+				rg.useGravity = true;
+				locomotionCollider.enabled = true;
+				OnWall = false;
+				isJump = false;
+				isUp = false;
+				isDown = false;
+				OnWallAnimation = false;
+				helpers.Clear ();
+				DownInt = 0;
 			}
-			if (OnWall && !isJump && !isUp) {
+			if (OnWall && !isJump && !isUp && !isJumpDown) {
 				OnWallCanLocomtion = true;
 				if (ColMove != null) {
 					RaycastHit hitLeft;

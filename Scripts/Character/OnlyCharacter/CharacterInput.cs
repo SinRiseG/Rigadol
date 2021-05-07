@@ -41,6 +41,8 @@ public class CharacterInput : MonoBehaviour
 	[HideInInspector]
 	public float timeJump;
 
+	public bool isJumpDown;
+
 	[Space (10)]
 	[Header ("Переключения управления на мобильое.")]
 	public bool Mobile;
@@ -70,7 +72,7 @@ public class CharacterInput : MonoBehaviour
 		JumpUpdate ();
 		BattelUpdate ();
 		SprintUpdate ();
-
+		JumpDownOnWallUpdate ();
 		if (!Mobile) {
 			// метод упровления с пк
 			InputPC ();
@@ -90,10 +92,10 @@ public class CharacterInput : MonoBehaviour
 	{
 		PCLocomotionUpdate ();
 		PCJumpUpdate ();
+		PCCrouchUpdate ();
 		if (!characterMovement.OnWall) {
 			PCBattelUpdate ();
 			PCAttackUpdate ();
-			PCCrouchUpdate ();
 			PCSprintState ();
 		}
 	}
@@ -148,22 +150,28 @@ public class CharacterInput : MonoBehaviour
 	//метод прыжка
 	void PCCrouchUpdate ()
 	{
-		if (!battle) {
-			if (characterState.isGroundet) {
-				if (!characterState.isBattle) {
-					if (Input.GetKeyDown (KeyCode.LeftControl)) {
-						crouchID += 1;
+		if (!characterState.OnWall) {
+			if (!battle) {
+				if (characterState.isGroundet) {
+					if (!characterState.isBattle) {
+						if (Input.GetKeyDown (KeyCode.LeftControl)) {
+							crouchID += 1;
+						}
 					}
 				}
 			}
-		}
 
-		if (crouchID == 0) {
-			characterState.isCrouch = false;
-		} else if (crouchID == 1) {
-			characterState.isCrouch = true;
+			if (crouchID == 0) {
+				characterState.isCrouch = false;
+			} else if (crouchID == 1) {
+				characterState.isCrouch = true;
+			} else {
+				crouchID = 0;
+			}
 		} else {
-			crouchID = 0;
+			if (Input.GetKeyDown (KeyCode.LeftControl)) {
+				isJumpDown = true;
+			}
 		}
 	}
 
@@ -255,12 +263,16 @@ public class CharacterInput : MonoBehaviour
 
 	public void OnCrouchState ()
 	{
-		if (!battle) {
-			if (characterState.isGroundet) {
-				if (!characterState.isBattle) {
-					crouchID += 1;
+		if (!characterState.OnWall) {
+			if (!battle) {
+				if (characterState.isGroundet) {
+					if (!characterState.isBattle) {
+						crouchID += 1;
+					}
 				}
 			}
+		} else {
+			isJumpDown = true;
 		}
 	}
 
@@ -281,6 +293,17 @@ public class CharacterInput : MonoBehaviour
 			timeJump = 0;
 		}
 		characterState.isJump = jump;
+	}
+
+	void JumpDownOnWallUpdate ()
+	{
+		if (isJumpDown) {
+			timeJump += Time.deltaTime;
+			if (timeJump > 0.1) {
+				isJumpDown = false;
+				timeJump = 0f;
+			}
+		}
 	}
 
 	void BattelUpdate ()

@@ -2229,8 +2229,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 2.5, z: 1}
-  m_Center: {x: 0, y: 1.38, z: 0}
+  m_Size: {x: 0.82, y: 2.24, z: 1.45}
+  m_Center: {x: 0, y: 1.6, z: 0.46}
 --- !u!65 &65551978028016000
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -2388,10 +2388,24 @@ MonoBehaviour:
   CrouchIt: 0
   FlyCheck: {fileID: 1975205673399996}
   helpers: []
+  BoxCliping: {fileID: 65474841485152920}
+  SpeedOnWallJump: 4
+  SpeedOnWallDown: 4.5
+  speedUp: 6
+  speedForward: 8
   OnWall: 0
+  OnWallJump: 0
   isJump: 0
   isUp: 0
+  isJumpDown: 0
+  DownInt: 0
+  DownJump: 0
+  isDown: 0
+  isFlyClimping: 0
+  CanOnWallMoveRight: 0
+  CanOnWallMoveLeft: 0
   col: {fileID: 0}
+  distance: 0
   ColMove: {fileID: 0}
   newPoint: {x: 0, y: 0, z: 0}
   OnWallCanLocomtion: 0
@@ -2878,6 +2892,7 @@ MonoBehaviour:
   dampTime: 0.1
   flyTime: 0
   jump: 0
+  moveAmound: 0
   t: 0
   timejump: 0
   hanguptime: 0
@@ -3068,7 +3083,9 @@ MonoBehaviour:
   MouseY: 0
   jump: 0
   time: 0
-  Mobile: 0
+  timeJump: 0
+  isJumpDown: 0
+  Mobile: 1
   FixedMouse: 20
   moveJoystick: {fileID: 114085702637846462}
   touchFild: {fileID: 114975542223757608}
@@ -3087,7 +3104,6 @@ MonoBehaviour:
   isSprint: 0
   isBattle: 0
   isAttack: 0
-  isDive: 0
   isJump: 0
   isCrouch: 0
   OnWall: 0

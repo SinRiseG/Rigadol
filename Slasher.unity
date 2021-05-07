@@ -711,11 +711,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 495180922}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &694582552 stripped
-BoxCollider:
-  m_PrefabParentObject: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-    type: 2}
-  m_PrefabInternal: {fileID: 866982466}
 --- !u!1 &745866649
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,11 +807,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: helpers.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4035483578729112, guid: 015d1c461d5bd5d41918ed6a91d0c8cb, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -849,68 +839,9 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1274647494824446, guid: 015d1c461d5bd5d41918ed6a91d0c8cb, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 224753854074137878, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
         type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114947098081885818, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: Mobile
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: m_Size.x
-      value: 0.82
-      objectReference: {fileID: 0}
-    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: m_Size.z
-      value: 1.45
-      objectReference: {fileID: 0}
-    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: m_Center.z
-      value: 0.46
-      objectReference: {fileID: 0}
-    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: BoxCliping
-      value: 
-      objectReference: {fileID: 694582552}
-    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: m_Center.y
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 65474841485152920, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: m_Size.y
-      value: 2.24
-      objectReference: {fileID: 0}
-    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: SpeedOnWallJump
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: speedUp
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: speedForward
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 114147084203766340, guid: 015d1c461d5bd5d41918ed6a91d0c8cb,
-        type: 2}
-      propertyPath: isUp
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

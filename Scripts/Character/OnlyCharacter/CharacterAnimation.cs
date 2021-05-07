@@ -166,6 +166,7 @@ public class CharacterAnimation : MonoBehaviour
 		anim.SetBool ("OnWall", characterMovement.OnWallAnimation);
 		anim.SetBool ("HangJump", characterMovement.hangJumpAnimation);
 		anim.SetBool ("UpWall", characterMovement.isUp);
+		anim.SetBool ("OnWallDown", characterMovement.isJumpDown);
 		if (characterMovement.OnWallCanLocomtion) {
 			if (!characterMovement.CanOnWallMoveLeft) {
 				characterInput.Horizontal = Mathf.Clamp (characterInput.Horizontal, 0, 1);
