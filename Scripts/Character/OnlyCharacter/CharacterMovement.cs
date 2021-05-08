@@ -311,7 +311,7 @@ public class CharacterMovement : MonoBehaviour
 								DownJump = true;
 								isDown = false;
 								Debug.Log ("Can jump down");
-							} else if (!DownJump) { /*if (col.bounds.max.y == helpers [i].bounds.max.y) */
+							} else if (!DownJump) {
 								isDown = true;
 								Debug.Log ("Go Down");
 							}
@@ -384,23 +384,53 @@ public class CharacterMovement : MonoBehaviour
 				OnWallCanLocomtion = true;
 				if (ColMove != null) {
 					RaycastHit hitLeft;
-					if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, out hitLeft, 1f)) {
-						if (hitLeft.collider == ColMove) {
-							CanOnWallMoveLeft = true;
-						} else {
-							CanOnWallMoveLeft = false;
+					if (Physics.Raycast (transform.position + transform.up * 1.75f + transform.right * -0.5f + transform.forward * -2f, transform.forward, out hitLeft, 5f)) {
+						{
+							if (hitLeft.collider.tag == "Helpers") {
+								if (characterInput.Horizontal <= 0) {
+									//transform.rotation = Quaternion.Slerp (transform.rotation, hitLeft.collider.transform.rotation, 5f * Time.deltaTime);
+									CanOnWallMoveLeft = true;
+									ColMove = hitLeft.collider;
+								} else {
+									CanOnWallMoveLeft = false;
+								}
+							} else {
+								CanOnWallMoveLeft = false;
+							}
+
 						}
 					}
-					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * -0.5f, transform.forward, Color.red);
+					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * -0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
 					RaycastHit hitRight;
-					if (Physics.Raycast (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, out hitRight, 1f)) {
-						if (hitRight.collider == ColMove) {
-							CanOnWallMoveRight = true;
+					if (Physics.Raycast (transform.position + transform.up * 1.75f + transform.right * 0.5f + transform.forward * -2f, transform.forward, out hitRight, 5f)) {
+						if (hitRight.collider.tag == "Helpers") {
+							if (characterInput.Horizontal >= 0) {
+								//transform.rotation = Quaternion.Slerp (transform.rotation, hitRight.collider.transform.rotation, 5f * Time.deltaTime);
+								CanOnWallMoveRight = true;
+								ColMove = hitRight.collider;
+							} else {
+								CanOnWallMoveRight = false;
+							}
 						} else {
 							CanOnWallMoveRight = false;
 						}
 					}
-					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * 0.5f, transform.forward, Color.red);
+					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * 0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
+
+					RaycastHit distanceHit;
+					if (Physics.Raycast (transform.position + transform.up * 1.87f, transform.forward, out distanceHit, .4f)) {
+						if (distanceHit.collider == ColMove) {
+							Debug.Log ("Давай ближе" + distanceHit.distance);
+							transform.rotation = Quaternion.Slerp (transform.rotation, distanceHit.collider.transform.rotation, 5f * Time.deltaTime);
+							if (distanceHit.distance > 0.35)
+								transform.position = new Vector3 (transform.position.x, transform.position.y, distanceHit.transform.position.z - 0.5f);
+							else if (distanceHit.distance < 0.2)
+								transform.position = new Vector3 (transform.position.x, transform.position.y, distanceHit.transform.position.z - 0.5f);
+						}
+
+
+					}
+					Debug.DrawRay (transform.position + transform.up * 1.87f, transform.forward, Color.blue);
 				}
 			} else {
 				OnWallCanLocomtion = false;
