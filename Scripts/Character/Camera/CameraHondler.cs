@@ -82,6 +82,11 @@ public class CameraHondler : MonoBehaviour
 			targetZ = cameraConfig.crouchZ;
 			targetY = cameraConfig.crouchY;
 		}
+		if (characterStatus.OnWall) {
+			targetX = cameraConfig.OnWallX;
+			targetZ = cameraConfig.OnWallY;
+			targetY = cameraConfig.OnWallZ;
+		}
 
 		if (leftPivot) {
 			targetX = -targetX;

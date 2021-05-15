@@ -18,7 +18,15 @@ public class CameraConfig : ScriptableObject
 	public float aimX;
 	public float normalY;
 
+	[Space (5)]
+	[Header ("Расположение камеры в присяди")]
 	public float crouchX;
 	public float crouchY;
 	public float crouchZ;
+
+	[Space (5)]
+	[Header ("Расположение камеры на стене")]
+	public float OnWallX;
+	public float OnWallY;
+	public float OnWallZ;
 }

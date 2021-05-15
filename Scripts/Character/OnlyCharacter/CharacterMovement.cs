@@ -52,6 +52,9 @@ public class CharacterMovement : MonoBehaviour
 	[Space (5)]
 	[Header ("Скорость подъёма на стену")]
 	public float speedUp;
+	[Space (5)]
+	[Header ("Выполнил подъём на стену.")]
+	public bool getUp;
 	public float speedForward;
 	public bool OnWall;
 	public bool OnWallJump;
@@ -65,8 +68,7 @@ public class CharacterMovement : MonoBehaviour
 	public bool CanOnWallMoveRight;
 	public bool CanOnWallMoveLeft;
 	public Collider col;
-	public float distance;
-	//Куда двигаемся
+
 	public Collider ColMove;
 	public Vector3 newPoint;
 	public bool OnWallCanLocomtion;
@@ -74,17 +76,40 @@ public class CharacterMovement : MonoBehaviour
 	public bool UpWallAnimation;
 	public bool hangJumpAnimation;
 	public bool HaveOnWall;
-	public float dir;
+
+	float t;
+
+	Vector3 startPos;
+	Vector3 targetPos;
+
+	public float offSetFromWall = 0.3f;
+	public float OnWallRotation;
+
+	public float offSetOnWall;
+
+	public float boxPosOnGround;
+	public float boxPosOnWall;
+
+	Transform helpClimp;
 
 	Vector3 moveCurrend;
 	float moveAmound;
 
 	void Awake ()
 	{
+		Init ();
+	}
+
+	void Init ()
+	{
 		rg = GetComponent<Rigidbody> ();
 		characterStatus = GetComponent<CharacterState> ();
 		characterInput = GetComponent<CharacterInput> ();
+
 		helpers = new List<Collider> ();
+
+		helpClimp = new GameObject ().transform;
+		helpClimp.name = "ClimpHelpers";
 	}
 
 	void  OnTriggerEnter (Collider col)
@@ -152,38 +177,6 @@ public class CharacterMovement : MonoBehaviour
 
 	void JumpUdpate ()
 	{
-//		if (isFlyClimping && HaveOnWall) {
-//			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
-//			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
-//			if (!characterStatus.isGroundet) {
-//				if (!characterStatus.isFlyForwardEmpty) {
-//					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
-//				} else {
-//					moveCurrend = new Vector3 (0f, 0f, 0f);
-//				}
-//			} else {
-//				moveCurrend = new Vector3 (0f, 0f, 0f);
-//				if (characterStatus.isJump) {
-//					rg.velocity = JumpPower * Vector3.up;
-//				}
-//			}
-//		} else if (isFlyClimping && !HaveOnWall) {
-//			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
-//			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
-//			if (!characterStatus.isGroundet) {
-//				if (!characterStatus.isFlyForwardEmpty) {
-//					moveCurrend = new Vector3 (0f, 0f, FlyCurrend * moveAmound);
-//				} else {
-//					moveCurrend = new Vector3 (0f, 0f, 0f);
-//				}
-//			} else {
-//				moveCurrend = new Vector3 (0f, 0f, 0f);
-//				if (characterStatus.isJump) {
-//					rg.velocity = JumpPower * Vector3.up;
-//				}
-//			}
-//		}
-//
 		if (!HaveOnWall) {
 			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
 			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
@@ -198,6 +191,10 @@ public class CharacterMovement : MonoBehaviour
 				if (characterStatus.isJump) {
 					rg.velocity = JumpPower * Vector3.up;
 				}
+			}
+		} else {
+			if (characterStatus.isJump) {
+				rg.velocity = 0f * Vector3.up;
 			}
 		}
 	}
@@ -244,7 +241,7 @@ public class CharacterMovement : MonoBehaviour
 		if (!isFlyClimping) {
 			if (!isJump && !isUp) {
 				if (characterStatus.isJump) {
-					if (OnWall && !Physics.Raycast (transform.position + Vector3.up * 2.1f, transform.forward, 1)) {
+					if (OnWall && !Physics.Raycast (transform.position + Vector3.up * (Mathf.Abs (offSetOnWall) + 0.2f), transform.forward, 1)) {
 						isUp = true;
 						newPoint = transform.position + Vector3.up * 2.1f + transform.forward * .5f;
 						OnWallAnimation = false;
@@ -269,7 +266,7 @@ public class CharacterMovement : MonoBehaviour
 							if (!OnWall) {
 								if (Physics.Raycast (ray, out hit, 2.5f)) {
 									ColMove = col;
-									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.33f + Vector3.up * -1.91f;
+									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * offSetFromWall + Vector3.up * offSetOnWall;
 									isJump = true;
 									locomotionCollider.enabled = false;
 									crouchCollider.enabled = false;
@@ -284,7 +281,7 @@ public class CharacterMovement : MonoBehaviour
 							} else {
 								if (Physics.Raycast (ray, out hit, 1.5f)) {
 									ColMove = col;
-									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.33f + Vector3.up * -1.91f;
+									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * offSetFromWall + Vector3.up * offSetOnWall;
 									isJump = true;
 									locomotionCollider.enabled = false;
 									crouchCollider.enabled = false;
@@ -327,7 +324,7 @@ public class CharacterMovement : MonoBehaviour
 						RaycastHit hit;
 						if (Physics.Raycast (ray, out hit, 2.5f)) {
 							ColMove = col;
-							newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * -1.91f;
+							newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * offSetOnWall;
 							isJumpDown = true;
 							DownJump = false;
 						}
@@ -356,18 +353,26 @@ public class CharacterMovement : MonoBehaviour
 
 				}
 			} else if (OnWall && isUp) {
-				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
-					if (transform.position.y < newPoint.y - .05f) {
-						transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), speedUp * Time.deltaTime);
-					} else {
-						transform.position = Vector3.Slerp (transform.position, newPoint, speedForward * Time.deltaTime);
-					}
-				} else {
+				if (getUp) {
+					//transform.position = newPoint;
 					rg.useGravity = true;
 					locomotionCollider.enabled = true;
 					OnWall = false;
 					isJump = false;
 					isUp = false;
+					getUp = false;
+//				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
+//					if (transform.position.y < newPoint.y - .05f) {
+//						//transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), speedUp * Time.deltaTime);
+//					} else {
+//						//transform.position = Vector3.Slerp (transform.position, newPoint, speedForward * Time.deltaTime);
+//					}
+//				} else {
+//					rg.useGravity = true;
+//					locomotionCollider.enabled = true;
+//					OnWall = false;
+//					isJump = false;
+//					isUp = false;
 				}
 			} else if (OnWall && isDown) {
 				rg.useGravity = true;
@@ -384,11 +389,10 @@ public class CharacterMovement : MonoBehaviour
 				OnWallCanLocomtion = true;
 				if (ColMove != null) {
 					RaycastHit hitLeft;
-					if (Physics.Raycast (transform.position + transform.up * 1.75f + transform.right * -0.5f + transform.forward * -2f, transform.forward, out hitLeft, 5f)) {
+					if (Physics.Raycast (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 0.2f) + transform.right * -0.5f + transform.forward * -2f, transform.forward, out hitLeft, 5f)) {
 						{
 							if (hitLeft.collider.tag == "Helpers") {
 								if (characterInput.Horizontal <= 0) {
-									//transform.rotation = Quaternion.Slerp (transform.rotation, hitLeft.collider.transform.rotation, 5f * Time.deltaTime);
 									CanOnWallMoveLeft = true;
 									ColMove = hitLeft.collider;
 								} else {
@@ -400,12 +404,11 @@ public class CharacterMovement : MonoBehaviour
 
 						}
 					}
-					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * -0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
+					Debug.DrawRay (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 0.2f) + transform.right * -0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
 					RaycastHit hitRight;
-					if (Physics.Raycast (transform.position + transform.up * 1.75f + transform.right * 0.5f + transform.forward * -2f, transform.forward, out hitRight, 5f)) {
+					if (Physics.Raycast (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 0.2f) + transform.right * 0.5f + transform.forward * -2f, transform.forward, out hitRight, 5f)) {
 						if (hitRight.collider.tag == "Helpers") {
 							if (characterInput.Horizontal >= 0) {
-								//transform.rotation = Quaternion.Slerp (transform.rotation, hitRight.collider.transform.rotation, 5f * Time.deltaTime);
 								CanOnWallMoveRight = true;
 								ColMove = hitRight.collider;
 							} else {
@@ -415,22 +418,26 @@ public class CharacterMovement : MonoBehaviour
 							CanOnWallMoveRight = false;
 						}
 					}
-					Debug.DrawRay (transform.position + transform.up * 1.87f + transform.right * 0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
+					Debug.DrawRay (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 0.2f) + transform.right * 0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
 
-					RaycastHit distanceHit;
-					if (Physics.Raycast (transform.position + transform.up * 1.87f, transform.forward, out distanceHit, .4f)) {
-						if (distanceHit.collider == ColMove) {
-							Debug.Log ("Давай ближе" + distanceHit.distance);
-							transform.rotation = Quaternion.Slerp (transform.rotation, distanceHit.collider.transform.rotation, 5f * Time.deltaTime);
-							if (distanceHit.distance > 0.35)
-								transform.position = new Vector3 (transform.position.x, transform.position.y, distanceHit.transform.position.z - 0.5f);
-							else if (distanceHit.distance < 0.2)
-								transform.position = new Vector3 (transform.position.x, transform.position.y, distanceHit.transform.position.z - 0.5f);
-						}
-
-
+					Vector3 origin = transform.position;
+					origin.y += (Mathf.Abs (offSetOnWall) - 0.2f);
+					Vector3 dirpos = transform.forward;
+					RaycastHit hitPos;
+					if (Physics.Raycast (origin, dirpos, out hitPos, 1)) {
+						Debug.Log ("Work");
+						helpClimp.transform.rotation = Quaternion.LookRotation (-hitPos.normal);
+						startPos = transform.position;
+						targetPos = hitPos.point + (hitPos.normal * offSetFromWall) + transform.up * offSetOnWall;
+						t = 0; 
 					}
-					Debug.DrawRay (transform.position + transform.up * 1.87f, transform.forward, Color.blue);
+
+					t += Time.deltaTime;
+					if (t > 1)
+						t = 1;
+					Vector3 tp = Vector3.Lerp (startPos, targetPos, t);
+					transform.position = new Vector3 (tp.x, transform.position.y, tp.z);
+					transform.rotation = Quaternion.Slerp (transform.rotation, helpClimp.rotation, OnWallRotation);
 				}
 			} else {
 				OnWallCanLocomtion = false;
@@ -441,21 +448,19 @@ public class CharacterMovement : MonoBehaviour
 
 	void  DebugLineCliping ()
 	{
-		if (helpers != null) {
-			for (int i = 0; i < helpers.Count; i++) {
-				if (ColMove != null) {
-					if (helpers [i].bounds.max.y > ColMove.bounds.max.y) {
-						Debug.DrawLine (transform.position + transform.up * 1.7f, new Vector3 (transform.position.x, helpers [i].transform.position.y, helpers [i].transform.position.z), Color.green);
-					} else if (helpers [i].bounds.max.y == ColMove.bounds.max.y) {
-						Debug.DrawLine (transform.position + transform.up * 1.7f, new Vector3 (transform.position.x, helpers [i].transform.position.y, helpers [i].transform.position.z), Color.white);
-					} else if (helpers [i].bounds.max.y < ColMove.bounds.max.y) {
-						Debug.DrawLine (transform.position + transform.up * 1.7f, new Vector3 (transform.position.x, helpers [i].transform.position.y, helpers [i].transform.position.z), Color.black);
-					}
-				} else {
-					Debug.DrawLine (transform.position + transform.up * 1.8f, helpers [i].transform.position, Color.green);
-				}
-			}
+		if (!OnWall) {
+			BoxCliping.center = new Vector3 (BoxCliping.center.x, boxPosOnGround, BoxCliping.center.z);
+		} else {
+			BoxCliping.center = new Vector3 (BoxCliping.center.x, boxPosOnWall, BoxCliping.center.z);
 		}
+	}
+
+	Vector3 PosWithOffSet (Vector3 origin, Vector3 target)
+	{
+		Vector3 direction = origin - target;
+		direction.Normalize ();
+		Vector3 offset = direction * offSetFromWall;
+		return target + offset;
 	}
 
 	void FixedUpdate ()

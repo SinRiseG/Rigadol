@@ -25,3 +25,6 @@ MonoBehaviour:
   crouchX: 0.5
   crouchY: 0.9
   crouchZ: -1
+  OnWallX: 0
+  OnWallY: -2
+  OnWallZ: 0
