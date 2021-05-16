@@ -40,7 +40,7 @@ public class CharacterInput : MonoBehaviour
 	public float time;
 	[HideInInspector]
 	public float timeJump;
-
+	[HideInInspector]
 	public bool isJumpDown;
 
 	[Space (10)]

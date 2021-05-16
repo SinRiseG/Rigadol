@@ -50,44 +50,68 @@ public class CharacterMovement : MonoBehaviour
 	public float SpeedOnWallJump;
 	public float SpeedOnWallDown;
 	[Space (5)]
-	[Header ("Скорость подъёма на стену")]
-	public float speedUp;
-	[Space (5)]
 	[Header ("Выполнил подъём на стену.")]
 	public bool getUp;
-	public float speedForward;
+	[Space (5)]
+	[Header ("Выполнил спуск со стену.")]
+	public bool getDown;
+	[HideInInspector]
 	public bool OnWall;
+	[HideInInspector]
 	public bool OnWallJump;
+	[HideInInspector]
 	public bool isJump;
+	[HideInInspector]
 	public bool isUp;
+	[HideInInspector]
 	public bool isJumpDown;
+	[HideInInspector]
 	public int DownInt;
+	[HideInInspector]
 	public bool DownJump;
+	[HideInInspector]
 	public bool isDown;
+	[HideInInspector]
 	public bool isFlyClimping;
+	[HideInInspector]
 	public bool CanOnWallMoveRight;
+	[HideInInspector]
 	public bool CanOnWallMoveLeft;
+	[HideInInspector]
 	public Collider col;
-
+	[HideInInspector]
 	public Collider ColMove;
+	[HideInInspector]
 	public Vector3 newPoint;
+	[HideInInspector]
 	public bool OnWallCanLocomtion;
+	[HideInInspector]
 	public bool OnWallAnimation;
+	[HideInInspector]
 	public bool UpWallAnimation;
+	[HideInInspector]
 	public bool hangJumpAnimation;
+	[HideInInspector]
 	public bool HaveOnWall;
 
 	float t;
 
 	Vector3 startPos;
 	Vector3 targetPos;
-
+	[Space (5)]
+	[Header ("Растояние от стены в клипинг системе.")]
 	public float offSetFromWall = 0.3f;
+	[Space (5)]
+	[Header ("Скорость вращения персонажа на стене.")]
 	public float OnWallRotation;
-
+	[Space (5)]
+	[Header ("Спуск персонажа по У для коректного зацепления.")]
 	public float offSetOnWall;
-
+	[Space (5)]
+	[Header ("Размер колайдара клипинга в обычном состоянии.")]
 	public float boxPosOnGround;
+	[Space (5)]
+	[Header ("Размер колайдера на стене.")]
 	public float boxPosOnWall;
 
 	Transform helpClimp;
@@ -336,7 +360,7 @@ public class CharacterMovement : MonoBehaviour
 			if (isJump && !isUp) {
 				if (Vector3.Distance (transform.position, new Vector3 (newPoint.x, newPoint.y, newPoint.z)) > .02f) {
 					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
-					transform.position = Vector3.Slerp (transform.position, new Vector3 (newPoint.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
+					transform.position = Vector3.Lerp (transform.position, new Vector3 (newPoint.x, newPoint.y, newPoint.z), SpeedOnWallJump * Time.deltaTime);
 				} else {
 					isJump = false;
 					hangJumpAnimation = false;
@@ -354,28 +378,15 @@ public class CharacterMovement : MonoBehaviour
 				}
 			} else if (OnWall && isUp) {
 				if (getUp) {
-					//transform.position = newPoint;
+					
 					rg.useGravity = true;
 					locomotionCollider.enabled = true;
 					OnWall = false;
 					isJump = false;
 					isUp = false;
 					getUp = false;
-//				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
-//					if (transform.position.y < newPoint.y - .05f) {
-//						//transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, transform.position.z), speedUp * Time.deltaTime);
-//					} else {
-//						//transform.position = Vector3.Slerp (transform.position, newPoint, speedForward * Time.deltaTime);
-//					}
-//				} else {
-//					rg.useGravity = true;
-//					locomotionCollider.enabled = true;
-//					OnWall = false;
-//					isJump = false;
-//					isUp = false;
 				}
 			} else if (OnWall && isDown) {
-				rg.useGravity = true;
 				locomotionCollider.enabled = true;
 				OnWall = false;
 				isJump = false;
@@ -384,6 +395,7 @@ public class CharacterMovement : MonoBehaviour
 				OnWallAnimation = false;
 				helpers.Clear ();
 				DownInt = 0;
+
 			}
 			if (OnWall && !isJump && !isUp && !isJumpDown) {
 				OnWallCanLocomtion = true;
@@ -401,7 +413,6 @@ public class CharacterMovement : MonoBehaviour
 							} else {
 								CanOnWallMoveLeft = false;
 							}
-
 						}
 					}
 					Debug.DrawRay (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 0.2f) + transform.right * -0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
@@ -437,7 +448,7 @@ public class CharacterMovement : MonoBehaviour
 						t = 1;
 					Vector3 tp = Vector3.Lerp (startPos, targetPos, t);
 					transform.position = new Vector3 (tp.x, transform.position.y, tp.z);
-					transform.rotation = Quaternion.Slerp (transform.rotation, helpClimp.rotation, OnWallRotation);
+					transform.rotation = Quaternion.Slerp (transform.rotation, helpClimp.transform.rotation, OnWallRotation * Time.deltaTime);
 				}
 			} else {
 				OnWallCanLocomtion = false;
@@ -453,6 +464,7 @@ public class CharacterMovement : MonoBehaviour
 		} else {
 			BoxCliping.center = new Vector3 (BoxCliping.center.x, boxPosOnWall, BoxCliping.center.z);
 		}
+			
 	}
 
 	Vector3 PosWithOffSet (Vector3 origin, Vector3 target)
@@ -467,6 +479,10 @@ public class CharacterMovement : MonoBehaviour
 	{
 		if (!OnWall) {
 			rg.MovePosition (rg.position + transform.TransformDirection (moveCurrend) * Time.fixedDeltaTime);
+			if (getDown) {
+				rg.useGravity = true;
+				getDown = false;
+			}
 		}
 	}
 
