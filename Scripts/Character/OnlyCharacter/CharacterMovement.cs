@@ -9,6 +9,7 @@ public class CharacterMovement : MonoBehaviour
 
 	private CharacterState characterStatus;
 	private CharacterInput characterInput;
+	private CharacterAnimation anim;
 	private Rigidbody rg;
 	[Space (5)]
 	[Header ("Переменная поворота персонажа.")]
@@ -66,10 +67,8 @@ public class CharacterMovement : MonoBehaviour
 	[HideInInspector]
 	public bool isJumpDown;
 	[HideInInspector]
-	public int DownInt;
-	[HideInInspector]
 	public bool DownJump;
-	[HideInInspector]
+
 	public bool isDown;
 	[HideInInspector]
 	public bool isFlyClimping;
@@ -96,11 +95,16 @@ public class CharacterMovement : MonoBehaviour
 
 	float t;
 
+	public int DownInit;
+
 	Vector3 startPos;
 	Vector3 targetPos;
 	[Space (5)]
 	[Header ("Растояние от стены в клипинг системе.")]
 	public float offSetFromWall = 0.3f;
+	[Space (5)]
+	[Header ("Растояние без стены в клипинг системе.")]
+	public float offSetWihtOutWall;
 	[Space (5)]
 	[Header ("Скорость вращения персонажа на стене.")]
 	public float OnWallRotation;
@@ -119,6 +123,8 @@ public class CharacterMovement : MonoBehaviour
 	Vector3 moveCurrend;
 	float moveAmound;
 
+	public bool WorH;
+
 	void Awake ()
 	{
 		Init ();
@@ -129,6 +135,7 @@ public class CharacterMovement : MonoBehaviour
 		rg = GetComponent<Rigidbody> ();
 		characterStatus = GetComponent<CharacterState> ();
 		characterInput = GetComponent<CharacterInput> ();
+		anim = GetComponent<CharacterAnimation> ();
 
 		helpers = new List<Collider> ();
 
@@ -164,6 +171,7 @@ public class CharacterMovement : MonoBehaviour
 	public void MoveUpdate ()
 	{
 		if (!OnWall) {
+			DownInit = 0;
 			LocomotionUpdate ();
 			RotationNormal ();
 			JumpUdpate ();
@@ -201,7 +209,7 @@ public class CharacterMovement : MonoBehaviour
 
 	void JumpUdpate ()
 	{
-		if (!HaveOnWall) {
+		if (helpers.Count == 0) {
 			moveAmound = (Mathf.Abs (characterInput.Horizontal) + Mathf.Abs (characterInput.Vertical));
 			moveAmound = Mathf.Clamp (moveAmound, 0, 1);
 			if (!characterStatus.isGroundet) {
@@ -216,7 +224,7 @@ public class CharacterMovement : MonoBehaviour
 					rg.velocity = JumpPower * Vector3.up;
 				}
 			}
-		} else {
+		} else if (helpers.Count != 0) {
 			if (characterStatus.isJump) {
 				rg.velocity = 0f * Vector3.up;
 			}
@@ -270,7 +278,6 @@ public class CharacterMovement : MonoBehaviour
 						newPoint = transform.position + Vector3.up * 2.1f + transform.forward * .5f;
 						OnWallAnimation = false;
 						UpWallAnimation = true;
-
 					} else {
 						col = null;
 						for (int i = 0; i < helpers.Count; i++) {
@@ -295,68 +302,48 @@ public class CharacterMovement : MonoBehaviour
 									locomotionCollider.enabled = false;
 									crouchCollider.enabled = false;
 									rg.useGravity = false;
-									if (!OnWall) {
-										OnWall = true;
-										OnWallAnimation = true;
-									} else {
-										hangJumpAnimation = true;
-									}
+									OnWall = true;
+									OnWallAnimation = true;
 								}
 							} else {
 								if (Physics.Raycast (ray, out hit, 1.5f)) {
 									ColMove = col;
 									newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * offSetFromWall + Vector3.up * offSetOnWall;
 									isJump = true;
-									locomotionCollider.enabled = false;
-									crouchCollider.enabled = false;
-									rg.useGravity = false;
-									if (!OnWall) {
-										OnWall = true;
-										OnWallAnimation = true;
-									} else {
-										hangJumpAnimation = true;
-									}
+									hangJumpAnimation = true;
 								}
 							}
 						}
 					}
 				}
 			}
-			if (characterInput.isJumpDown && OnWall && DownInt == 0) {
-				DownInt += 1;
+			if (characterInput.isJumpDown && OnWall && !isJumpDown) {
+				
 				for (int i = 0; i < helpers.Count; i++) {
 					if (Quaternion.Angle (transform.rotation, helpers [i].transform.rotation) < 50) {
-						if (helpers [i].bounds.max.y <= col.bounds.max.y) {
-							if (col.bounds.max.y > helpers [i].bounds.max.y) {
-								col = helpers [i];
-								DownJump = true;
-								isDown = false;
-								Debug.Log ("Can jump down");
-							} else if (!DownJump) {
-								isDown = true;
-								Debug.Log ("Go Down");
-							}
+						if (helpers [i].bounds.max.y < ColMove.bounds.max.y) {
+							col = helpers [i];
 						}
 					}
 				}
-				if (DownJump) {
-					if (col != null) {
-						Ray ray = new Ray (
-							          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
-							          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
-						          );
-						RaycastHit hit;
-						if (Physics.Raycast (ray, out hit, 2.5f)) {
-							ColMove = col;
-							newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * offSetOnWall;
-							isJumpDown = true;
-							DownJump = false;
-						}
-					} else {
-						Debug.Log ("Lol Go Dawn");
+				if (col.bounds.max.y != ColMove.bounds.max.y) {
+					Ray ray = new Ray (
+						          new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z),
+						          new Vector3 (col.bounds.center.x, col.bounds.max.y - .1f, col.bounds.center.z) - new Vector3 (transform.position.x, col.bounds.max.y - .1f, transform.position.z)
+					          );
+					RaycastHit hit;
+					if (Physics.Raycast (ray, out hit, 2.5f)) {
+						ColMove = col;
+						newPoint = new Vector3 (hit.point.x, col.bounds.max.y, hit.point.z) - col.transform.forward * 0.35f + Vector3.up * offSetOnWall;
+						isJumpDown = true;
+						DownJump = false;
 					}
+				} else if (col.bounds.max.y == ColMove.bounds.max.y) {
+					isDown = true;
+					OnWallAnimation = false;
 				}
 			}
+
 			if (isJump && !isUp) {
 				if (Vector3.Distance (transform.position, new Vector3 (newPoint.x, newPoint.y, newPoint.z)) > .02f) {
 					transform.rotation = Quaternion.Slerp (transform.rotation, ColMove.transform.rotation, 5f * Time.deltaTime);
@@ -365,6 +352,7 @@ public class CharacterMovement : MonoBehaviour
 					isJump = false;
 					hangJumpAnimation = false;
 
+
 				}
 			} else if (isJumpDown) {
 				if (Vector3.Distance (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z)) > .02f) {
@@ -372,13 +360,12 @@ public class CharacterMovement : MonoBehaviour
 					transform.position = Vector3.Slerp (transform.position, new Vector3 (transform.position.x, newPoint.y, newPoint.z), SpeedOnWallDown * Time.deltaTime);
 				} else {
 					isJumpDown = false;
-					DownJump = false;
-					DownInt = 0;
+					DownJump = false; 
+
 
 				}
 			} else if (OnWall && isUp) {
 				if (getUp) {
-					
 					rg.useGravity = true;
 					locomotionCollider.enabled = true;
 					OnWall = false;
@@ -387,15 +374,16 @@ public class CharacterMovement : MonoBehaviour
 					getUp = false;
 				}
 			} else if (OnWall && isDown) {
-				locomotionCollider.enabled = true;
-				OnWall = false;
-				isJump = false;
-				isUp = false;
-				isDown = false;
-				OnWallAnimation = false;
-				helpers.Clear ();
-				DownInt = 0;
-
+				if (getDown) {
+					rg.useGravity = true;
+					locomotionCollider.enabled = true;
+					OnWall = false;
+					isJump = false;
+					isUp = false;
+					isDown = false;
+					OnWallAnimation = false;
+					helpers.Clear ();
+				}
 			}
 			if (OnWall && !isJump && !isUp && !isJumpDown) {
 				OnWallCanLocomtion = true;
@@ -431,15 +419,31 @@ public class CharacterMovement : MonoBehaviour
 					}
 					Debug.DrawRay (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 0.2f) + transform.right * 0.5f + transform.forward * -1f, transform.forward * 5f, Color.red);
 
+					if (!Physics.Raycast (transform.position + Vector3.up * (Mathf.Abs (offSetOnWall) - 1f), transform.forward, 1)) {
+						WorH = true;
+					} else {
+						WorH = false;
+					}
+
+					Debug.DrawRay (transform.position + transform.up * (Mathf.Abs (offSetOnWall) - 1f), transform.forward * 1f, Color.red);
+
+					float TransformForWall = 0f;
+
+					if (WorH) {
+						TransformForWall = offSetWihtOutWall;
+					} else {
+						TransformForWall = offSetFromWall;
+					}
+
+
 					Vector3 origin = transform.position;
 					origin.y += (Mathf.Abs (offSetOnWall) - 0.2f);
 					Vector3 dirpos = transform.forward;
 					RaycastHit hitPos;
 					if (Physics.Raycast (origin, dirpos, out hitPos, 1)) {
-						Debug.Log ("Work");
 						helpClimp.transform.rotation = Quaternion.LookRotation (-hitPos.normal);
 						startPos = transform.position;
-						targetPos = hitPos.point + (hitPos.normal * offSetFromWall) + transform.up * offSetOnWall;
+						targetPos = hitPos.point + (hitPos.normal * TransformForWall) + transform.up * offSetOnWall;
 						t = 0; 
 					}
 
@@ -479,11 +483,6 @@ public class CharacterMovement : MonoBehaviour
 	{
 		if (!OnWall) {
 			rg.MovePosition (rg.position + transform.TransformDirection (moveCurrend) * Time.fixedDeltaTime);
-			if (getDown) {
-				rg.useGravity = true;
-				getDown = false;
-			}
 		}
 	}
-
 }

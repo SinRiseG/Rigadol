@@ -34,16 +34,20 @@ public class CharacterAnimation : MonoBehaviour
 	public float timejump;
 	[HideInInspector]
 	public float hanguptime;
+	float WallOrHang;
 
 	void Start ()
+	{
+		Init ();
+	}
+
+	void Init ()
 	{
 		anim = GetComponent<Animator> ();
 		characterInput = GetComponent<CharacterInput> ();
 		characterStatus = GetComponent<CharacterState> ();
 		characterMovement = GetComponent<CharacterMovement> ();
 	}
-
-
 
 	public void AnimationUpdate ()
 	{
@@ -162,7 +166,6 @@ public class CharacterAnimation : MonoBehaviour
 
 	void OnWallUpdate ()
 	{
-		anim.SetBool ("OnWallJump", characterMovement.OnWallJump);
 		anim.SetBool ("OnWall", characterMovement.OnWallAnimation);
 		anim.SetBool ("HangJump", characterMovement.hangJumpAnimation);
 		anim.SetBool ("UpWall", characterMovement.isUp);
@@ -181,5 +184,17 @@ public class CharacterAnimation : MonoBehaviour
 			}
 			anim.SetFloat ("OnWallH", characterInput.Horizontal);
 		}
+		OnHangOrWall ();
+	}
+
+	public void OnHangOrWall ()
+	{
+		WallOrHang = Mathf.Clamp (WallOrHang, 0, 1);
+		if (characterMovement.WorH) {
+			WallOrHang -= Time.deltaTime;
+		} else {
+			WallOrHang += Time.deltaTime;
+		}
+		anim.SetFloat ("ChangeWall", WallOrHang, dampTime, Time.deltaTime);
 	}
 }
