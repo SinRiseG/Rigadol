@@ -15,7 +15,9 @@ public class CameraHondler : MonoBehaviour
 	[Space (5)]
 	[Header ("Положения камеры холдер.")]
 	public Transform mTransform;
-
+	[Space (5)]
+	[Header ("Положения камеры холдер.")]
+	public Transform targetLook;
 	[Space (10)]
 	[Header ("Компоненты с персонажа.")]
 	public CharacterState characterStatus;
@@ -46,13 +48,15 @@ public class CameraHondler : MonoBehaviour
 	[HideInInspector]
 	public float titlAngle;
 
+	public float t;
 
-	void LateUpdate ()
+
+	void Update ()
 	{
-		FixedTick ();
+		Tick ();
 	}
 
-	void FixedTick ()
+	void Tick ()
 	{
 		delta = Time.deltaTime;
 
@@ -64,6 +68,8 @@ public class CameraHondler : MonoBehaviour
 
 		mouseX = characterInput.MouseX;
 		mouseY = characterInput.MouseY;
+
+		TargetLook ();
 	}
 
 	void HandlePosition ()
@@ -72,7 +78,7 @@ public class CameraHondler : MonoBehaviour
 		float targetY = cameraConfig.normalY;
 		float targetZ = cameraConfig.normalZ;
 
-		if (characterStatus.isBattle) {
+		if (characterStatus.isAimingMove) {
 			targetX = cameraConfig.aimX;
 			targetZ = cameraConfig.aimZ;
 		}
@@ -124,5 +130,24 @@ public class CameraHondler : MonoBehaviour
 		pivot.localRotation = Quaternion.Euler (titlAngle, 0, 0);
 	}
 
+	void TargetLook ()
+	{
+
+		if (characterStatus.isAimingMove) {
+			t += Time.deltaTime;
+			if (t > 0.3f) {
+				Ray ray = new  Ray (camTrans.position, camTrans.forward * 2000);
+				RaycastHit hit;
+				if (Physics.Raycast (ray, out hit)) {
+					targetLook.position = Vector3.Lerp (targetLook.position, hit.point, Time.deltaTime * 40);
+				} else {
+					targetLook.position = Vector3.Lerp (targetLook.position, targetLook.transform.forward * 200, Time.deltaTime * 5);
+				}
+			}
+		} else {
+			targetLook.localPosition = new Vector3 (0f, 0f, 10f);
+			t = 0;
+		}
+	}
 	
 }
