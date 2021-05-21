@@ -12,6 +12,7 @@ public class WeaponConfigs : ScriptableObject
 	[Space (3)]
 	[Header ("Прифаб оружия.")]
 	public GameObject WeaponPrefabs;
+	public GameObject prefabItems;
 	[Space (3)]
 	[Header ("Вектора оружия.")]
 	public Vector3 Weapon_pos;

@@ -145,7 +145,7 @@ public class CameraHondler : MonoBehaviour
 				}
 			}
 		} else {
-			targetLook.localPosition = new Vector3 (0f, 0f, 10f);
+			targetLook.localPosition = new Vector3 (0f, 0f, 3f);
 			t = 0;
 		}
 	}

@@ -8,12 +8,14 @@ public class Controller : MonoBehaviour
 	private CharacterInput characterInput;
 	private CharacterAnimation characterAnimation;
 	private CharacterMovement characterMovement;
+	private CharacterInventory characterInventory;
 
 	void Start ()
 	{
 		characterInput = GetComponent<CharacterInput> ();
 		characterAnimation = GetComponent<CharacterAnimation> ();
 		characterMovement = GetComponent <CharacterMovement> ();
+		characterInventory = GetComponent<CharacterInventory> ();
 	}
 
 	void Update ()
@@ -21,5 +23,6 @@ public class Controller : MonoBehaviour
 		characterInput.InputUpdate ();
 		characterAnimation.AnimationUpdate ();
 		characterMovement.MoveUpdate ();
+		characterInventory.InventoryUpdate ();
 	}
 }

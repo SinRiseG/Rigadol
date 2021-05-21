@@ -30,6 +30,26 @@ public class CharacterInventory : MonoBehaviour
 		characterInput = GetComponent<CharacterInput> ();
 	}
 
+	public void InventoryUpdate ()
+	{
+		Ray ray = new Ray (mCamera.transform.position, mCamera.transform.forward * 5f);
+		RaycastHit hit;
+		if (Physics.Raycast (ray, out hit)) {
+			if (hit.collider.tag == "Item") {
+				if (Input.GetKeyDown (KeyCode.E)) {
+					Instantiate (firstWeapon.prefabItems, hit.collider.transform.position, hit.collider.transform.rotation);
+					DestroyWeapon ();
+					firstWeapon = hit.collider.GetComponent<Item> ().weaponConfigsItem;
+					characterInput.SelWeapon = 2;
+					anim.SetTrigger ("Select");
+					Destroy (hit.collider.gameObject);
+				}
+			}
+		}
+
+	}
+
+
 	public void SelectWeapon (int selWeapon)
 	{
 		if (selWeapon == 1) {

@@ -17,7 +17,7 @@ MonoBehaviour:
   X_rot_speed: 5
   minAngle: -35
   maxAngle: 50
-  normalZ: -1.7
+  normalZ: -1.5
   normalX: 0.2
   aimZ: -1
   aimX: 0.4

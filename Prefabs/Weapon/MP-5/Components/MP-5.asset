@@ -15,5 +15,7 @@ MonoBehaviour:
   rHandRot: {x: 3.511, y: -3.037, z: -85.594}
   WeaponPrefabs: {fileID: 1427159836358946, guid: bfd76c3c2577e7e409ed074b98a10f55,
     type: 2}
+  prefabItems: {fileID: 1314210871986016, guid: 37e62d9c91adde74fa7e9d96eccdbd89,
+    type: 2}
   Weapon_pos: {x: 0, y: 0, z: 0}
   Weapon_rot: {x: 0, y: 0, z: 0}
