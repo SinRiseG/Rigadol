@@ -9,6 +9,7 @@ public class CharacterAnimation : MonoBehaviour
 	private CharacterInput characterInput;
 	private CharacterState characterStatus;
 	private CharacterMovement characterMovement;
+	private CharacterIK characterIK;
 
 	[Header ("Чистота перехода анимации.")]
 	public float dampTime;
@@ -48,6 +49,7 @@ public class CharacterAnimation : MonoBehaviour
 		characterInput = GetComponent<CharacterInput> ();
 		characterStatus = GetComponent<CharacterState> ();
 		characterMovement = GetComponent<CharacterMovement> ();
+		characterIK = GetComponent<CharacterIK> ();
 	}
 
 	public void AnimationUpdate ()
@@ -195,4 +197,5 @@ public class CharacterAnimation : MonoBehaviour
 		}
 		anim.SetFloat ("ChangeWall", WallOrHang, dampTime, Time.deltaTime);
 	}
+		
 }

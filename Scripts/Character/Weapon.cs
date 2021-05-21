@@ -20,6 +20,8 @@ public class Weapon : MonoBehaviour
 	public GameObject Shell;
 	public Transform shellPosition;
 
+	public Transform LeftHand;
+
 	void Start ()
 	{
 		audioSource = GetComponent<AudioSource> ();

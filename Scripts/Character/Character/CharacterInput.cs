@@ -8,6 +8,9 @@ public class CharacterInput : MonoBehaviour
 	private CharacterState characterState;
 	private CharacterAnimation characterAnimation;
 	private CharacterMovement characterMovement;
+	private CharacterInventory characterInventory;
+	private Animator anim;
+
 	public Weapon weapon;
 	//Переменная вертикального движения
 	[HideInInspector]
@@ -47,7 +50,8 @@ public class CharacterInput : MonoBehaviour
 	[Space (10)]
 	[Header ("Переключения управления на мобильое.")]
 	public bool Mobile;
-	[Header ("Мобильные компоненты управления.")]
+	[Header ("Дебаг прицела.")]
+	public bool AimingDebug;
 	//для мобильного упровления чувствительность
 	[Header ("Чувствительность мобильной камеры.")]
 	public float FixedMouse;
@@ -57,6 +61,10 @@ public class CharacterInput : MonoBehaviour
 	[Space (5)]
 	[Header ("Джойстик для движения камерой.")]
 	public FixedTouchFild touchFild;
+	[Space (5)]
+	[Header ("Какое оружие нажато.")]
+	public int SelWeapon = 1;
+
 
 	public bool opportunityToAim;
 	public float distance;
@@ -67,6 +75,8 @@ public class CharacterInput : MonoBehaviour
 		characterState = GetComponent<CharacterState> ();
 		characterAnimation = GetComponent<CharacterAnimation> ();
 		characterMovement = GetComponent<CharacterMovement> ();
+		characterInventory = GetComponent<CharacterInventory> ();
+		anim = GetComponent<Animator> ();
 	}
 	// главный метод работы инпута , в него указываю все свои методы
 	public void InputUpdate ()
@@ -102,6 +112,7 @@ public class CharacterInput : MonoBehaviour
 			PCAimingUpdate ();
 			PCAttackUpdate ();
 			PCSprintState ();
+			PCInputSelectWeapon ();
 		}
 	}
 	// стандартное управления
@@ -116,21 +127,52 @@ public class CharacterInput : MonoBehaviour
 	// режим битвы
 	void PCAimingUpdate ()
 	{
-		
-		if (Input.GetMouseButton (1) && opportunityToAim) {
-			characterState.isAiming = true;
-			characterState.isAimingMove = true;
+		if (anim.GetBool ("Weapon")) {
+			if (!AimingDebug) {
+				if (Input.GetMouseButton (1) && opportunityToAim) {
+					characterState.isAiming = true;
+					characterState.isAimingMove = true;
+				}
+				if (Input.GetMouseButton (1) && !opportunityToAim) {
+					characterState.isAiming = false;
+					characterState.isAimingMove = true;
+				}
+				if (!Input.GetMouseButton (1)) {
+					characterState.isAiming = false;
+					characterState.isAimingMove = false;
+				}
+			} else {
+				characterState.isAiming = true;
+				characterState.isAimingMove = true;
+			}
 		}
-		if (Input.GetMouseButton (1) && !opportunityToAim) {
-			characterState.isAiming = false;
-			characterState.isAimingMove = true;
-		}
-		if (!Input.GetMouseButton (1)) {
-			characterState.isAiming = false;
-			characterState.isAimingMove = false;
+	}
+	//Проверка и нажатия кнопок для смены оружия
+	public void PCInputSelectWeapon ()
+	{
+		if (!anim.GetBool ("Aiming")) {
+			if (Input.GetKeyDown (KeyCode.Alpha1) && SelWeapon != 1) {
+				SelWeapon = 1;
+				anim.SetTrigger ("Select");
+			}
+			if (Input.GetKeyDown (KeyCode.Alpha2) && SelWeapon != 2) {
+				SelWeapon = 2;
+				anim.SetTrigger ("Select");
+			}
+			if (Input.GetKeyDown (KeyCode.Alpha3) && SelWeapon != 3) {
+				SelWeapon = 3;
+				anim.SetTrigger ("Select");
+			}
 		}
 
 	}
+	//метод для анимации
+	public void SelectWeapon ()
+	{
+		characterInventory.DestroyWeapon ();
+		characterInventory.SelectWeapon (SelWeapon);
+	}
+
 	//метод быстрого бега
 	void PCSprintState ()
 	{
@@ -374,9 +416,9 @@ public class CharacterInput : MonoBehaviour
 
 	void RayCastAiming ()
 	{
-		Debug.DrawLine (transform.position + transform.up * 1.4f, weapon.targetLook.position, Color.green);
+		Debug.DrawLine (transform.position + transform.up * 1.4f, characterInventory.targetLook.position, Color.green);
 
-		distance = Vector3.Distance (transform.position + transform.up * 1.4f, weapon.targetLook.position);
+		distance = Vector3.Distance (transform.position + transform.up * 1.4f, characterInventory.targetLook.position);
 		if (distance > 1.5f) {
 			opportunityToAim = true;
 		} else {

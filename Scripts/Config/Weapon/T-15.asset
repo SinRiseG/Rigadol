@@ -9,11 +9,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ada9bcbef1846c4d8f8ef0db7120270, type: 3}
-  m_Name: MP-5
+  m_Name: T-15
   m_EditorClassIdentifier: 
-  rHandPos: {x: 0.178, y: -0.103, z: 0.284}
-  rHandRot: {x: 3.511, y: -3.037, z: -85.594}
-  WeaponPrefabs: {fileID: 1427159836358946, guid: bfd76c3c2577e7e409ed074b98a10f55,
+  rHandPos: {x: 0.201, y: 0, z: 0.373}
+  rHandRot: {x: 0.004, y: -0.006, z: -82.358}
+  WeaponPrefabs: {fileID: 1181245114864250, guid: 48789880c36a72147b95ec4b1c378eae,
     type: 2}
-  Weapon_pos: {x: 0, y: 0, z: 0}
-  Weapon_rot: {x: 0, y: 0, z: 0}
+  Weapon_pos: {x: 0.011, y: 0.174, z: 0.023}
+  Weapon_rot: {x: 0, y: 180.001, z: -74.665}

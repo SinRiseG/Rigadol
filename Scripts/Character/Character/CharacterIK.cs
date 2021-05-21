@@ -21,9 +21,12 @@ public class CharacterIK : MonoBehaviour
 	public Quaternion lh_rot;
 
 	public float rh_Weight;
+	public float lh_Weight;
 
 	public Transform shoulter;
 	public Transform aimPivot;
+
+	public bool LeftWeight;
 
 	void Start ()
 	{
@@ -57,57 +60,70 @@ public class CharacterIK : MonoBehaviour
 		l_hand.name = "Left Hand";
 		l_hand.transform.parent = aimPivot;
 
-		//через инвентарь указываем позицию правой руки
-		r_hand.localPosition = characterInventory.firstWeapon.rHandPos;
-		Quaternion rotRight = Quaternion.Euler (characterInventory.firstWeapon.rHandRot.x, characterInventory.firstWeapon.rHandRot.y, characterInventory.firstWeapon.rHandRot.z);
-		r_hand.localRotation = rotRight;
 	}
 
 	void Update ()
 	{
-		lh_rot = l_hand_target.rotation;
-		l_hand.position = l_hand_target.position;
-
-
-		if (characterState.isAiming) {
-			rh_Weight += Time.deltaTime * 4;
-		} else {
-			rh_Weight -= Time.deltaTime * 4;
+		if (l_hand_target != null) {
+			lh_rot = l_hand_target.rotation;
+			l_hand.position = l_hand_target.position;
 		}
-		rh_Weight = Mathf.Clamp (rh_Weight, 0, 1);
+
+		if (anim.GetInteger ("WeaponTipe") >= 2) {
+			lh_Weight = 1;
+			if (characterState.isAiming) {
+				rh_Weight += Time.deltaTime * 4;
+			} else {
+				rh_Weight -= Time.deltaTime * 4;
+			}
+			rh_Weight = Mathf.Clamp (rh_Weight, 0, 1);
+			lh_Weight = Mathf.Clamp (lh_Weight, 0, 1);
+		} else {
+			if (characterState.isAiming) {
+				rh_Weight += Time.deltaTime * 4;
+				lh_Weight += Time.deltaTime * 4;
+			} else {
+				rh_Weight -= Time.deltaTime * 4;
+				lh_Weight -= Time.deltaTime * 4;
+			}
+			rh_Weight = Mathf.Clamp (rh_Weight, 0, 1);
+			lh_Weight = Mathf.Clamp (lh_Weight, 0, 1);
+		}	
 	}
 
 	void OnAnimatorIK ()
 	{
-		aimPivot.position = shoulter.position;
-		if (characterState.isAiming) {
-			aimPivot.LookAt (targetLook);
+		if (!characterState.OnWall) {
+			aimPivot.position = shoulter.position;
+			if (characterState.isAiming) {
+				aimPivot.LookAt (targetLook);
 
-			anim.SetLookAtWeight (1f, .4f, 1f);
-			anim.SetLookAtPosition (targetLook.position);
+				anim.SetLookAtWeight (1f, .4f, 1f);
+				anim.SetLookAtPosition (targetLook.position);
 
-			anim.SetIKPositionWeight (AvatarIKGoal.LeftHand, 1);
-			anim.SetIKPosition (AvatarIKGoal.LeftHand, l_hand.position);
-			anim.SetIKRotationWeight (AvatarIKGoal.LeftHand, 1);
-			anim.SetIKRotation (AvatarIKGoal.LeftHand, lh_rot);
+				anim.SetIKPositionWeight (AvatarIKGoal.LeftHand, lh_Weight);
+				anim.SetIKPosition (AvatarIKGoal.LeftHand, l_hand.position);
+				anim.SetIKRotationWeight (AvatarIKGoal.LeftHand, lh_Weight);
+				anim.SetIKRotation (AvatarIKGoal.LeftHand, lh_rot);
 
-			anim.SetIKPositionWeight (AvatarIKGoal.RightHand, rh_Weight);
-			anim.SetIKPosition (AvatarIKGoal.RightHand, r_hand.position);
-			anim.SetIKRotationWeight (AvatarIKGoal.RightHand, rh_Weight);
-			anim.SetIKRotation (AvatarIKGoal.RightHand, r_hand.rotation);
-		} else {
-			anim.SetLookAtWeight (.3f, .3f, .8f);
-			anim.SetLookAtPosition (targetLook.position);
+				anim.SetIKPositionWeight (AvatarIKGoal.RightHand, rh_Weight);
+				anim.SetIKPosition (AvatarIKGoal.RightHand, r_hand.position);
+				anim.SetIKRotationWeight (AvatarIKGoal.RightHand, rh_Weight);
+				anim.SetIKRotation (AvatarIKGoal.RightHand, r_hand.rotation);
+			} else {
+				anim.SetLookAtWeight (.3f, .3f, .8f);
+				anim.SetLookAtPosition (targetLook.position);
 
-			anim.SetIKPositionWeight (AvatarIKGoal.LeftHand, 1);
-			anim.SetIKPosition (AvatarIKGoal.LeftHand, l_hand.position);
-			anim.SetIKRotationWeight (AvatarIKGoal.LeftHand, 1);
-			anim.SetIKRotation (AvatarIKGoal.LeftHand, lh_rot);
+				anim.SetIKPositionWeight (AvatarIKGoal.LeftHand, lh_Weight);
+				anim.SetIKPosition (AvatarIKGoal.LeftHand, l_hand.position);
+				anim.SetIKRotationWeight (AvatarIKGoal.LeftHand, lh_Weight);
+				anim.SetIKRotation (AvatarIKGoal.LeftHand, lh_rot);
 
-			anim.SetIKPositionWeight (AvatarIKGoal.RightHand, rh_Weight);
-			anim.SetIKPosition (AvatarIKGoal.RightHand, r_hand.position);
-			anim.SetIKRotationWeight (AvatarIKGoal.RightHand, rh_Weight);
-			anim.SetIKRotation (AvatarIKGoal.RightHand, r_hand.rotation);
+				anim.SetIKPositionWeight (AvatarIKGoal.RightHand, rh_Weight);
+				anim.SetIKPosition (AvatarIKGoal.RightHand, r_hand.position);
+				anim.SetIKRotationWeight (AvatarIKGoal.RightHand, rh_Weight);
+				anim.SetIKRotation (AvatarIKGoal.RightHand, r_hand.rotation);
+			}
 		}
 	}
 }

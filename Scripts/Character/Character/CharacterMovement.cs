@@ -182,7 +182,9 @@ public class CharacterMovement : MonoBehaviour
 			FlyUpdate ();
 			AnimationUpdate ();
 		}
-		ClimpingSystemUpdate ();
+		if (characterInput.SelWeapon == 1) {
+			ClimpingSystemUpdate ();
+		}
 	}
 
 	void LocomotionUpdate ()
