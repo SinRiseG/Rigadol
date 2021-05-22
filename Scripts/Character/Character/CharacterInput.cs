@@ -120,9 +120,13 @@ public class CharacterInput : MonoBehaviour
 	{
 		Vertical = Input.GetAxis ("Vertical");
 		Horizontal = Input.GetAxis ("Horizontal");
-
-		MouseX = Input.GetAxis ("Mouse X");
-		MouseY = Input.GetAxis ("Mouse Y");
+		if (!characterInventory.InventoryOpen) {
+			MouseX = Input.GetAxis ("Mouse X");
+			MouseY = Input.GetAxis ("Mouse Y");
+		} else {
+			MouseX = 0;
+			MouseY = 0;
+		}
 	}
 	// режим битвы
 	void PCAimingUpdate ()
